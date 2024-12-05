@@ -1,0 +1,7 @@
+.env
+/database/*
+view.json
+/tests/*
+*.log
+/.venv/*
+/data/*.xml
