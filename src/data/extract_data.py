@@ -117,17 +117,11 @@ def extract_cancelamento(file):
             )
 
 
-print(
-    "src/data/CartaCancelamento_005_01102024_a_31102024_vcto_29112024_TODOS_04112024_140302.xml"
-)
-
-
-
 
 
 # Itera pelos arquivos da pasta data, procurando pela lista de cancelamento.
-def iniciar_fluxo():
-
+def extrair_dados():
+    sucess = 0
     for root, dirs, files in os.walk(DATA_FOLDER):
      
         for file in files:
@@ -135,7 +129,11 @@ def iniciar_fluxo():
             if "Cancelamento" in file and file.endswith(".xml"):
                 file_path = os.path.join(root, file)
 
-                print(file_path)
+                extract_cancelamento(file_path)
                 os.rename(file_path, os.path.join(root,f"Processado{AGORA}.xml"))
+                sucess = sucess+1
+    if not sucess > 0:
+        return print("Nenhum arquivo processado.")
+    else: 
+        return print(f"Tarefa concluída, {sucess} processados.")
             
-iniciar_fluxo()

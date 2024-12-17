@@ -1,28 +1,25 @@
 import os
 from dotenv import load_dotenv
 
-
-
 load_dotenv()
+
+
 
 # nome do cartorio e código do cartorio
 PRIMEIRO_CARTORIO_DE_FORTALEZA = "1"
 OSIAN_ARARIPE = "5"
 CARTORIO_AGUIAR = "8"
 
+# Banco de dados
 db_config = {
-    "host": "localhost",
-    "database": "pyextractdb",
-    "user": "pyextractdb",
-    "password": os.getenv("DB_PG_PASS"),
+    "host": os.getenv("dbhost"),
+    "port": os.getenv("dbport"),
+    "database": os.getenv("dbname"),
+    "user": os.getenv("dbuser"),
+    "password": os.getenv("dbpass"),
 }
 
-
-mail_config = {
-    "user": "gerlannoservis@gmail.com",
-    "password": os.getenv("GMAIL_PASS"),
-    "host": "imap.gmail.com",
-}
+# Dados Whatsapp Business
 
 wa_config = {
     "OSIAN1": {
@@ -92,6 +89,10 @@ wa_config = {
 
 
 def find_token(phone_number_id):
+
+    """
+    Localizar o token pelo phone number id.
+    """
     for item in wa_config.values():
         if item.get("PHONE_NUMBER_ID") == phone_number_id:
 

@@ -10,7 +10,7 @@ from config.configs import find_token
 from controller.controller import get_business_account, cadastrar_template
 
 
-def get_templates():
+def update_templates_list():
 
     accounts = get_business_account()
 
@@ -47,4 +47,3 @@ def get_templates():
     return print("Atualização concluída")
 
 
-get_templates()

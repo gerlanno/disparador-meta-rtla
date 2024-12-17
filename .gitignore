@@ -4,4 +4,4 @@ view.json
 /tests/*
 *.log
 /.venv/*
-/data/*.xml
+/data/

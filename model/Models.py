@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from sqlalchemy import (
     
     Numeric,
+    Text,
     create_engine,
     Column,
     ForeignKey,
@@ -70,7 +71,7 @@ class Zapenviado(Base):
     message_status = Column(String(50))
     accepted = Column(String(255))
     rejected = Column(String(255))
-    response = Column(String(255))
+    response = Column(Text)
     error = Column(String(255))
     datainsert = Column(TIMESTAMP, server_default=func.now())
 
