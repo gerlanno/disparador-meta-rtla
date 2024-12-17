@@ -102,3 +102,72 @@ def find_token(phone_number_id):
         else:
             token_found = ""
     return token_found if token_found else print("Token não localizado")
+
+def dados_contas():
+    
+    dados = [
+        {
+            "name": "AGUIAR1",
+            "phone_id": "214744335057692",
+            "business_account_id": "208428645692302",
+            "verified_name": "Cartório Aguiar",
+            "display_phone_number": "558594129614"
+        },
+        {
+            "name": "AGUIAR2",
+            "phone_id": "145717898625245",
+            "business_account_id": "150991778095452",
+            "verified_name": "Cartório Aguiar",
+            "display_phone_number": "558597590064"
+        },
+        {
+            "name": "OSIAN1",
+            "phone_id": "130290610176023",
+            "business_account_id": "151660654694197",
+            "verified_name": "Cartório Ossian Araripe",
+            "display_phone_number": "558586633919"
+        },
+        {
+            "name": "OSIAN2",
+            "phone_id": "140714015796020",
+            "business_account_id": "105202826019315",
+            "verified_name": "Cartório Ossian Araripe",
+            "display_phone_number": "558586632161"
+        },
+        {
+            "name": "IEPB1",
+            "phone_id": "106462279201071",
+            "business_account_id": "106307439216846",
+            "verified_name": "Ieptbce",
+            "display_phone_number": "558582175611"
+        },
+        {
+            "name": "IEPB2",
+            "phone_id": "101190366397218",
+            "business_account_id": "101352253047460",
+            "verified_name": "Ieptbce",
+            "display_phone_number": "558598411019"
+        },
+        {
+            "name": "IEPB3",
+            "phone_id": "261216513749428",
+            "business_account_id": "231484600058458",
+            "verified_name": "IEPTBCE",
+            "display_phone_number": "558599366186"
+        },
+        {
+            "name": "RTLA1",
+            "phone_id": "115891571590409",
+            "business_account_id": "114158791765127",
+            "verified_name": "Ieptbce",
+            "display_phone_number": "558598411052"
+        },
+        {
+            "name": "RTLA2",
+            "phone_id": "105309195992923",
+            "business_account_id": "112070761975997",
+            "verified_name": "Ieptbce",
+            "display_phone_number": "558598411242"
+        }
+    ]
+    return dados

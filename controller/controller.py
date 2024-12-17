@@ -1,10 +1,11 @@
 import sys
 import os
 from urllib import response
-
+from tqdm import tqdm
 from requests import session
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from config.configs import dados_contas
 from database.db import create_session
 from sqlalchemy import text, update
 from model.Models import (
@@ -99,7 +100,7 @@ def inserir_contato(dados_contato, session):
 
     except Exception as e:
         pass
-
+   
 
 def titulos_registrados():
     """
@@ -184,8 +185,9 @@ def get_titulos():
                     telefone if telefone else None,
                 )
         )
+    session.close()        
     return lista_titulos if len(lista_titulos) > 0 else False
-    session.close()
+    
 
 
 def cadastrar_template(**kwargs):
@@ -243,6 +245,25 @@ def get_templates(business_acc_id):
     return list_templates
 
 
+def cadastrar_business_account():
+    """
+    Inserir no databse as contas de whatsapp business e seus dados
+    """ 
+    lista = dados_contas()
+    session = create_session()
+
+    for item in tqdm(lista, desc="Cadastrando Whatsapp business account", unit="Contas", colour="GREEN"):
+        try: 
+
+            business_acc = Wb_account(**item)
+            session.add(business_acc)
+            session.commit()
+            
+        except Exception as e:
+            print(e)
+    session.close()        
+    return print("Whatsapp Business Accounts Cadastradas")
+
 def get_business_account(**kwargs):
 
     """
@@ -271,6 +292,7 @@ def get_business_account(**kwargs):
                 "display_phone_number": acc.display_phone_number,
             }
         )
+    session.close()    
     return accounts
 
 
@@ -311,5 +333,5 @@ def historico_disparos(**kwargs):
         print(e)
 
         session.rollback()
-
+    session.close()
 

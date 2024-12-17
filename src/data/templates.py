@@ -1,6 +1,6 @@
 import sys
 import os
-
+from tqdm import tqdm
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".."))
 )
@@ -22,17 +22,16 @@ def update_templates_list():
 
         token = find_token(phone_id).replace("Bearer ", "")
 
-        print(token, phone_id)
-      
+        
         api_url = f"https://graph.facebook.com/v20.0/{business_account_id}/message_templates?fields=name, status,id,language,category&access_token={token}"
 
         response = request(method="GET", url=api_url)
-        print(response.text)
+    
 
         response_data = json.loads(response.text)
         templates = response_data.get("data")
         if templates:
-            for template in templates:
+            for template in tqdm(templates, desc=f"Cadastrando templates - Conta: {name}", unit=" templates ", colour="MAGENTA"):
                 try:
                     cadastrar_template(
                         name=template.get("name"),

@@ -4,16 +4,22 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from colorama import Fore, Style, init
 from data.templates import update_templates_list
-from controller.controller import get_business_account
+from controller.controller import get_business_account, cadastrar_business_account
 from data.extract_data import extrair_dados
+from model.Models import create_tables
+from database.db import create_database_if_not_exists, tables_created
 
-def pause():
-    programPause = input("\nPressione <ENTER> para continuar...")
+# Criação do banco de dados, caso não exista.
+create_database_if_not_exists()
+
+# Chamar a criação de tabelas, caso todas
+# as tabelas necessárias não estiverem criadas.
+if len(tables_created) < 7:
+    create_tables()
 
 
 # Inicializa o colorama
 init(autoreset=True)
-
 
 # ASCII Art do Logo
 logo = r"""
@@ -29,6 +35,11 @@ logo = r"""
 """
 
 
+# Função para aguardar um comando para continuar do usuário.
+def pause():
+    programPause = input("\nPressione <ENTER> para continuar...")
+
+
 # Função para exibir o menu
 def show_menu():
     print(Fore.CYAN + logo)
@@ -37,7 +48,7 @@ def show_menu():
         Fore.GREEN
         + ">>> Para iniciar os "
         + Fore.CYAN
-        + "disparos utilizar: "
+        + "disparos " + Fore.GREEN + "utilizar: "
         + Fore.MAGENTA
     )
     print(
@@ -46,23 +57,40 @@ def show_menu():
         + Fore.LIGHTRED_EX
         + "main.py "
         + Fore.MAGENTA
-        + "<<business account>>\n"
+        + "<<nome business account>>\n"
     )
     opt = "0"
     while opt != "x":
 
+        # Opções do menu
         print(Fore.MAGENTA + "===================================================\n")
         print(Fore.MAGENTA + "[ 1 ] " + Fore.GREEN + "Extrair dados do XML\n")
-        print(Fore.MAGENTA + "[ 2 ] " + Fore.GREEN + "Atualizar tabela de templates\n")
+        print(
+            Fore.MAGENTA
+            + "[ 2 ] "
+            + Fore.GREEN
+            + "Inserir dados da tabela de Contas Whatsapp business\n"
+        )
+
         print(
             Fore.MAGENTA + "[ 3 ] " + Fore.GREEN + "Listar contas Whatsapp business\n"
         )
+        print(
+            Fore.MAGENTA
+            + "[ 4 ] "
+            + Fore.GREEN
+            + "Atualizar/Inserir dados da tabela de templates "
+            + Fore.RED
+            + "(Obs: os dados das contas devem ter sido inseridos antes.)\n"
+        )
         print(Fore.MAGENTA + "[ x ] " + Fore.GREEN + "Sair\n")
         print(Fore.MAGENTA + "===================================================\n")
+
         opt = input(
             Fore.MAGENTA + ">>> " + Fore.GREEN + "Digite a opção: " + Fore.LIGHTRED_EX
         )
 
+        # Executar a opção escolhida.
         match opt:
 
             case "1":
@@ -83,7 +111,16 @@ def show_menu():
                         print("Opção inválida!")
 
             case "2":
-                ...
+                print(
+                    Fore.MAGENTA
+                    + "\n=============== "
+                    + Fore.GREEN
+                    + "Inserindo/Atualizando dados das Whatsapp Business Accounts.."
+                    + Fore.MAGENTA
+                    + " ===============\n"
+                )
+                cadastrar_business_account()
+                pause()
 
             case "3":
                 print(
@@ -110,12 +147,18 @@ def show_menu():
                         + acc.get("display_phone_number")
                     )
                 pause()
+            case "4":
+                print(Style.RESET_ALL)
+                update_templates_list()
+                pause()
+
             case "x":
                 print("Encerrando sistema..")
             case _:
                 print("Opção inválida!")
 
 
+# Verificar se foi passado parâmetro na execução do script, para exibir ou não o menu.
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         try:

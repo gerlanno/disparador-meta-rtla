@@ -17,10 +17,13 @@ from sqlalchemy import (
     func,
     PrimaryKeyConstraint,
     null,
+    inspect
 )
 
 from sqlalchemy.orm import sessionmaker, declarative_base
 from database.db import create_session, engine
+
+
 
 Base = declarative_base()
 
@@ -98,6 +101,13 @@ class Wb_account(Base):
 
 
 def create_tables():
-    Base.metadata.create_all(engine)
+    try:
+        Base.metadata.create_all(engine)
+        inspector = inspect(engine)
+        if "cartorios" in inspector.get_table_names():
+            from controller.insrir_cartorios import dados_cartorio
+            dados_cartorio()
 
-create_tables()
+    except Exception as e:
+        print(e)
+
