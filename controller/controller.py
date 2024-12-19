@@ -207,16 +207,16 @@ def cadastrar_template(**kwargs):
         session.add(template)
 
         session.commit()
-
+        print("Templates cadastrados..")
     except Exception as e:
         session.rollback()
-        print(f"Erro cadastrando novo template, verificando se é uma atualização..")
+
         try:
             session.query(Template).filter(Template.name == name).filter(
                 Template.wbaccount_id == wbaccount_id
             ).update({Template.status: status})
             session.commit()
-            print("Template atualizado")
+            
         except Exception as e:
             print("Erro atualizando.. ", e)
 
@@ -242,6 +242,7 @@ def get_templates(business_acc_id):
     except Exception as e:
         print("Erro recuperando templates", e)
 
+    session.close()
     return list_templates
 
 
@@ -261,6 +262,7 @@ def cadastrar_business_account():
             
         except Exception as e:
             print(e)
+
     session.close()        
     return print("Whatsapp Business Accounts Cadastradas")
 
@@ -292,6 +294,7 @@ def get_business_account(**kwargs):
                 "display_phone_number": acc.display_phone_number,
             }
         )
+        
     session.close()    
     return accounts
 

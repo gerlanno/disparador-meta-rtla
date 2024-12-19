@@ -25,8 +25,7 @@ def update_templates_list():
         
         api_url = f"https://graph.facebook.com/v20.0/{business_account_id}/message_templates?fields=name, status,id,language,category&access_token={token}"
 
-        response = request(method="GET", url=api_url)
-    
+        response = request(method="GET", url=api_url)    
 
         response_data = json.loads(response.text)
         templates = response_data.get("data")

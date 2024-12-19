@@ -10,21 +10,14 @@ from controller.controller import processa_dados_titulo, titulos_registrados
 from datetime import datetime
 
 
-# ###.###.#### CONSTANTES ####.####.#### #
 
-"""
-Diretório onde devem estar os arquivos xml 
-que possuem os dados a ser extraídos.
-"""
-DATA_FOLDER = r'src/data'
+#Diretório onde devem estar os arquivos xml 
+#que possuem os dados a ser extraídos.
+DATA_FOLDER = r"src/data"
 
-"""
-Momento atual, com data e hora completa, 
-será usado para renomear o arquivo processado.
-"""
+#Momento atual, com data e hora completa, 
+#será usado para renomear o arquivo processado.
 AGORA = datetime.ctime(datetime.now()).replace(":", "").replace(" ", "")
-
-# ###.###.###.###.###.#### #
 
 
 def extract_cancelamento(file):
@@ -117,23 +110,20 @@ def extract_cancelamento(file):
             )
 
 
-
-
 # Itera pelos arquivos da pasta data, procurando pela lista de cancelamento.
 def extrair_dados():
     sucess = 0
     for root, dirs, files in os.walk(DATA_FOLDER):
-     
+
         for file in files:
-            
+
             if "Cancelamento" in file and file.endswith(".xml"):
                 file_path = os.path.join(root, file)
 
                 extract_cancelamento(file_path)
-                os.rename(file_path, os.path.join(root,f"Processado{AGORA}.xml"))
-                sucess = sucess+1
+                os.rename(file_path, os.path.join(root, f"Processado{AGORA}.xml"))
+                sucess = sucess + 1
     if not sucess > 0:
         return print("Nenhum arquivo processado.")
-    else: 
-        return print(f"Tarefa concluída, {sucess} processados.")
-            
+    else:
+        return print(f"Tarefa concluída, arquivos processados: {sucess}.")

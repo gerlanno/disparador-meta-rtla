@@ -3,36 +3,25 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from colorama import Fore, Style, init
-from data.templates import update_templates_list
-from controller.controller import get_business_account, cadastrar_business_account
 from data.extract_data import extrair_dados
+from database.db import create_database_if_not_exists, check_tables
 from model.Models import create_tables
-from database.db import create_database_if_not_exists, tables_created
+from sender import disparar
+from controller.controller import get_business_account, cadastrar_business_account
+from data.templates import update_templates_list
 
 # Criação do banco de dados, caso não exista.
-create_database_if_not_exists()
+db_created = create_database_if_not_exists()
 
 # Chamar a criação de tabelas, caso todas
 # as tabelas necessárias não estiverem criadas.
-if len(tables_created) < 7:
-    create_tables()
-
+if db_created:
+    tables_created = check_tables()
+    if len(tables_created) < 7:
+        create_tables()
 
 # Inicializa o colorama
 init(autoreset=True)
-
-# ASCII Art do Logo
-logo = r"""
--------------------------------------------------------------------
-   _____                _           
-  / ____|              | |          
- | (___   ___ _ __   __| | ___ _ __ 
-  \___ \ / _ \ '_ \ / _` |/ _ \ '__|
-  ____) |  __/ | | | (_| |  __/ |   
- |_____/ \___|_| |_|\__,_|\___|_|   
-
- --------------------------------------------------------------------                               
-"""
 
 
 # Função para aguardar um comando para continuar do usuário.
@@ -42,13 +31,14 @@ def pause():
 
 # Função para exibir o menu
 def show_menu():
-    print(Fore.CYAN + logo)
     print(Fore.GREEN + "Inicializando sistema\n")
     print(
         Fore.GREEN
         + ">>> Para iniciar os "
         + Fore.CYAN
-        + "disparos " + Fore.GREEN + "utilizar: "
+        + "disparos "
+        + Fore.GREEN
+        + "utilizar: "
         + Fore.MAGENTA
     )
     print(
@@ -162,12 +152,16 @@ def show_menu():
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         try:
-            operacao = sys.argv[1].lower()
+            business_acc_name = sys.argv[1].upper()
+            business_accs = get_business_account()
+            for acc in business_accs:
 
-            if operacao == "disparo":
-                print(operacao)
-            else:
-                ...
+                # Checar se existe a business acc com o nome informado e inciar os disparos.
+                if business_acc_name in acc.values():
+                    print("Iniciando disparos..")
+                    disparar(business_acc_name)
+                    break
+
         except Exception as e:
             print(f"erro: {e}")
     else:
