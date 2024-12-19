@@ -5,3 +5,4 @@ view.json
 *.log
 /.venv/*
 .xml
+__pycache__/
