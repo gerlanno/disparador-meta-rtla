@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
-
 # nome do cartorio e código do cartorio
 PRIMEIRO_CARTORIO_DE_FORTALEZA = "1"
 OSIAN_ARARIPE = "5"
