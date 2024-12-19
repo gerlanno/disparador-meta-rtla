@@ -10,7 +10,7 @@ Este projeto permite o envio automatizado de mensagens pelo WhatsApp Business, i
 
 - Envio de mensagens personalizadas para contatos específicos.
 - Integração com a API oficial do WhatsApp Business.
-- Configuração de templates de mensagens.
+- Troca automática de template em caso de bloqueio.
 
 ## Requisitos
 
