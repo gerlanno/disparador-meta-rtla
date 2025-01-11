@@ -6,3 +6,4 @@ view.json
 /.venv/*
 .xml
 __pycache__/
+*.xml
