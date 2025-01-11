@@ -13,7 +13,7 @@ from controller.controller import (
     cadastrar_template,
 )
 from config.configs import find_token
-
+from utils.tools import convert_to_brl
 import requests
 import json
 
@@ -84,7 +84,13 @@ def disparar(business_acc_name):
         print("Não foram encontrados templates para operação de cancelamento")
 
     # Buscar a lista de titulos
-    titulos = get_titulos()
+    if business_acc_name in ["AGUIAR1", "AGUIAR2"]:
+        titulos = get_titulos(cartorio=8)
+    elif business_acc_name in ["OSSIAN1", "OSSIAN2"]:
+        titulos = get_titulos(cartorio=5)
+    else:
+        titulos = get_titulos()
+
 
     if titulos and template_name:
         for titulo in tqdm(titulos, "Enviando mensagens..", unit="Disparos ", colour="GREEN"):
@@ -111,7 +117,7 @@ def disparar(business_acc_name):
                 },
                 {
                     "type": "text",
-                    "text": valor_titulo,
+                    "text": convert_to_brl(valor_titulo),
                 },
                 {
                     "type": "text",

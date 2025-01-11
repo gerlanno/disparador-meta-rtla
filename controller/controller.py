@@ -115,14 +115,19 @@ def titulos_registrados():
     return len(qtd_titulos)
 
 
-def get_titulos():
+def get_titulos(**kwargs):
     """
     Função para obter uma lista de titutlos que ainda não 
     foi feita a comunicação.
     """
+
     lista_titulos = []
     session = create_session()
-    titulos = session.query(Titulo).all()
+    if kwargs:
+        cartorio = kwargs.get("cartorio")
+        titulos = session.query(Titulo).filter(Titulo.cartorio_id == cartorio).all()
+    else:
+        titulos = session.query(Titulo).all()
 
     for titulo in titulos:
 

@@ -16,8 +16,8 @@ def dados_cartorio():
         ...
     else:    
         cartorio1 = Cartorio(id=1, nome='1o Ofício de Notas e Protesto', website='https://1cartoriodefortaleza.com.br/')
-        cartorio2 = Cartorio(id=5, nome='Cartório Ossian Araripe', website='https://www.cartorioossianararipe.com.br/')
-        cartorio3 = Cartorio(id=8, nome='Cartório Aguiar', website='https://www.cartorioaguiar.com.br/')
+        cartorio2 = Cartorio(id=5, nome='Ossian Araripe', website='https://www.cartorioossianararipe.com.br/')
+        cartorio3 = Cartorio(id=8, nome='Aguiar', website='https://www.cartorioaguiar.com.br/')
 
         cartorios = [cartorio1, cartorio2, cartorio3]
         try:

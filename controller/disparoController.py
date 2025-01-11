@@ -20,17 +20,3 @@
 
 5 -     
 """
-
-
-
-
-
-def iniciar_disparos():
-    pass
-
-
-titulos = session.query(Titulo).all()
-
-for titulo in titulos:
-
-    pass
