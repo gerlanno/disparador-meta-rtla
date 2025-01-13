@@ -1,5 +1,5 @@
 .env
-/database/*
+/database/*.sql
 view.json
 /tests/*
 *.log
