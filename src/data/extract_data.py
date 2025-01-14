@@ -121,8 +121,10 @@ def extrair_dados():
                 file_path = os.path.join(root, file)
 
                 extract_cancelamento(file_path)
-                os.rename(file_path, os.path.join(root, f"Processado{AGORA}.xml"))
+                new_filename = f"Processado{AGORA}.xml"
+                os.rename(file_path, os.path.join(root, new_filename))
                 sucess = sucess + 1
+
     if not sucess > 0:
         return print("Nenhum arquivo processado.")
     else:
