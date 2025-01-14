@@ -71,7 +71,7 @@ def extract_cancelamento(file):
                 if not telefone.text == None and telefone.text.isnumeric():
                     if telefone.text[2] != "3":
                         whatsapp = f"55{telefone.text}"
-
+                
                 lista_contatos.append((documento_devedor, whatsapp))
 
             lista_devedores.append((documento_devedor, nome_devedor))
@@ -121,7 +121,7 @@ def extrair_dados():
                 file_path = os.path.join(root, file)
 
                 extract_cancelamento(file_path)
-                new_filename = f"Processado{AGORA}.xml"
+                new_filename = f"Processado{AGORA}_{sucess}.xml"
                 os.rename(file_path, os.path.join(root, new_filename))
                 sucess = sucess + 1
 

@@ -93,7 +93,7 @@ def disparar(business_acc_name):
 
 
     if titulos and template_name:
-        for titulo in tqdm(titulos, "Enviando mensagens..", unit="Disparos ", colour="GREEN"):
+        for titulo in tqdm(titulos, "Iniciando disparos..", unit="Disparos ", colour="GREEN"):
             (
                 nome_devedor,
                 titulo_id,
@@ -146,9 +146,7 @@ def disparar(business_acc_name):
                         paramentros_template,
                         business_id,
                     )
-            cadastrar_template(
-                name=template_name, wbaccount_id=business_id, status="DISABLED"
-            )    
+    
     else:
         print("Nada a processar.")
 
