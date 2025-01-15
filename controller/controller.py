@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from config.configs import dados_contas
 from database.db import create_session
 from sqlalchemy import text, update
+from utils.logger import Logger
 from model.Models import (
     Cartorio,
     Titulo,
@@ -18,6 +19,7 @@ from model.Models import (
     Wb_account,
 )
 
+logger = Logger().get_logger()
 
 def processa_dados_titulo(dados):
     """
@@ -37,7 +39,7 @@ def processa_dados_titulo(dados):
                 inserir_contato(contato, session)
 
     except Exception as e:
-        print(e)
+        logger.error(e)
 
     session.close()
 
@@ -71,7 +73,7 @@ def inserir_titulo(dados_titulo, session):
         return last_inserted_id
 
     except Exception as e:
-        pass
+        logger.error(e)
 
 
 def inserir_devedor(id_titulo, dados_devedor, session):
@@ -85,7 +87,7 @@ def inserir_devedor(id_titulo, dados_devedor, session):
         session.commit()
 
     except Exception as e:
-        pass
+       logger.error(e)
 
 
 def inserir_contato(dados_contato, session):
@@ -99,7 +101,7 @@ def inserir_contato(dados_contato, session):
         session.commit()
 
     except Exception as e:
-        pass
+        logger.error(e)
    
 
 def titulos_registrados():
@@ -212,7 +214,7 @@ def cadastrar_template(**kwargs):
         session.add(template)
 
         session.commit()
-        print("Templates cadastrados..")
+        logger.info("Cadastro de templates concluído")
     except Exception as e:
         session.rollback()
 
@@ -221,9 +223,9 @@ def cadastrar_template(**kwargs):
                 Template.wbaccount_id == wbaccount_id
             ).update({Template.status: status})
             session.commit()
-            
+            logger.info("Atualização de templates concluída.")
         except Exception as e:
-            print("Erro atualizando.. ", e)
+            logger.error("Erro atualizando.. ", e)
 
     session.close()
 
@@ -245,7 +247,7 @@ def get_templates(business_acc_id):
             list_templates.append(str(template[0]))
 
     except Exception as e:
-        print("Erro recuperando templates", e)
+        logger.error("Erro recuperando templates", e)
 
     session.close()
     return list_templates
@@ -266,7 +268,7 @@ def cadastrar_business_account():
             session.commit()
             
         except Exception as e:
-            print(e)
+            logger.error(e)
 
     session.close()        
     return print("Whatsapp Business Accounts Cadastradas")
@@ -280,7 +282,7 @@ def get_business_account(**kwargs):
     session = create_session()
     if kwargs:
         name = kwargs.get("name")
-        print(name)
+        
         business_acc = (
             session.query(Wb_account)
             .filter(Wb_account.name == kwargs.get("name"))
@@ -338,7 +340,7 @@ def historico_disparos(**kwargs):
         session.commit()
 
     except Exception as e:
-        print(e)
+        logger.error(e)
 
         session.rollback()
     session.close()

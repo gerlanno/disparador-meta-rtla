@@ -19,11 +19,11 @@ from sqlalchemy import (
     null,
     inspect
 )
-
+from utils.logger import Logger
 from sqlalchemy.orm import sessionmaker, declarative_base
 from database.db import create_session, engine
 
-
+logger = Logger().get_logger()
 
 Base = declarative_base()
 
@@ -109,5 +109,5 @@ def create_tables():
             dados_cartorio()
 
     except Exception as e:
-        print(e)
+        logger.error(e)
 

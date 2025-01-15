@@ -4,8 +4,10 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from model.Models import Cartorio
-
+from utils.logger import Logger
 from database.db import create_session
+
+logger = Logger().get_logger()
 
 def dados_cartorio():
     session = create_session()
@@ -28,7 +30,7 @@ def dados_cartorio():
 
         except Exception as e:
             session.rollback()
-            print("Erro: ", e)
+            logger.error(e)
 
         return print("Dados dos cartórios registrados.")
 

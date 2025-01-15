@@ -8,7 +8,9 @@ from config.configs import db_config
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import psycopg2
 from psycopg2 import sql
+from utils.logger import Logger
 
+logger = Logger().get_logger()
 
 HOST = db_config.get("host")
 PORT = db_config.get("port")
@@ -53,7 +55,7 @@ def create_database_if_not_exists():
             conn.close()
 
     except Exception as e:
-        print(f"Erro ao criar banco de dados: {e}")        
+        logger.info(f"Erro ao criar banco de dados: {e}")        
         return False
     
     return True

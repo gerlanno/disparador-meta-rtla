@@ -9,6 +9,10 @@ from model.Models import create_tables
 from sender import disparar
 from controller.controller import get_business_account, cadastrar_business_account
 from data.templates import update_templates_list
+from utils.logger import Logger
+
+logger = Logger().get_logger()
+
 
 # Criação do banco de dados, caso não exista.
 db_created = create_database_if_not_exists()
@@ -163,6 +167,6 @@ if __name__ == "__main__":
                     break
 
         except Exception as e:
-            print(f"erro: {e}")
+            logger.info(e)
     else:
         show_menu()

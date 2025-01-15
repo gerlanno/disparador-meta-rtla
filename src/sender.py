@@ -16,6 +16,9 @@ from config.configs import find_token
 from utils.tools import convert_to_brl
 import requests
 import json
+from utils.logger import Logger
+
+logger = Logger().get_logger()
 
 #
 template_name = ""
@@ -191,7 +194,8 @@ def send_messages(
     response = requests.request(method="POST", url=api_url, headers=headers, json=data)
     response_text = json.loads(response.text)
     status_code = response.status_code
-
+    logger.info(response)
+    
     if status_code == 200:
         message_status, messageid, wa_id = parse_response(response_text)
         # Gravar a mensagem enviada no banco
