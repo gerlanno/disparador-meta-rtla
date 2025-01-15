@@ -101,6 +101,7 @@ def inserir_contato(dados_contato, session):
         session.commit()
 
     except Exception as e:
+        session.rollback()
         logger.error(e)
    
 
@@ -345,3 +346,22 @@ def historico_disparos(**kwargs):
         session.rollback()
     session.close()
 
+def get_zapenviados():
+    session = create_session()
+    zapenviados = []
+    historico_mensagens = session.query(Zapenviado).all()
+    for mensagem in historico_mensagens:
+        zapenviados.append({
+            "messageid": mensagem.messageid,
+            "titulo_id": mensagem.titulo_id,
+            "whatsapp": mensagem.whatsapp,
+            "wa_id": mensagem.wa_id,
+            "message_status": mensagem.message_status,
+            "accepted": mensagem.accepted,
+            "rejected": mensagem.rejected,
+            "response": mensagem.response,
+            "error": mensagem.error,
+            "datainsert": str(mensagem.datainsert)   
+        })
+    
+    return zapenviados

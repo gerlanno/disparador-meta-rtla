@@ -10,6 +10,9 @@ from sender import disparar
 from controller.controller import get_business_account, cadastrar_business_account
 from data.templates import update_templates_list
 from utils.logger import Logger
+from utils.tools import zapeviados_to_csv
+
+
 
 logger = Logger().get_logger()
 
@@ -77,6 +80,14 @@ def show_menu():
             + Fore.RED
             + "(Obs: os dados das contas devem ter sido inseridos antes.)\n"
         )
+        print(
+            Fore.MAGENTA
+            + "[ 5 ] "
+            + Fore.GREEN
+            + "Exportar tabela zapenviados para arquivo csv "
+            + Fore.RED
+            + "-\n"
+        )        
         print(Fore.MAGENTA + "[ x ] " + Fore.GREEN + "Sair\n")
         print(Fore.MAGENTA + "===================================================\n")
 
@@ -144,6 +155,11 @@ def show_menu():
             case "4":
                 print(Style.RESET_ALL)
                 update_templates_list()
+                pause()
+
+            case "5":
+                print(Style.RESET_ALL)
+                zapeviados_to_csv()
                 pause()
 
             case "x":

@@ -7,3 +7,5 @@ view.json
 .xml
 __pycache__/
 *.xml
+*.csv
+*.log

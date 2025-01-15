@@ -194,7 +194,7 @@ def send_messages(
     response = requests.request(method="POST", url=api_url, headers=headers, json=data)
     response_text = json.loads(response.text)
     status_code = response.status_code
-    logger.info(response)
+    logger.info(response_text)
     
     if status_code == 200:
         message_status, messageid, wa_id = parse_response(response_text)
