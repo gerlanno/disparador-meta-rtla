@@ -29,7 +29,7 @@ def zapeviados_to_csv():
     Salvar registros da tabela zapenviados para csv
     """
     message_list = get_zapenviados()
-    print(message_list)
+ 
     with open(f"sendhistory-{AGORA}.csv", mode='w', newline='', encoding='utf-8') as arquivo_csv:
         try:
             fieldnames = message_list[0].keys()
