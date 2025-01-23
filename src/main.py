@@ -7,7 +7,7 @@ from data.extract_data import extrair_dados
 from database.db import create_database_if_not_exists, check_tables
 from model.Models import create_tables
 from sender import disparar
-from controller.controller import get_business_account, cadastrar_business_account
+from controller.controller import get_business_account, cadastrar_business_account, atualizar_contato
 from data.templates import update_templates_list
 from utils.logger import Logger
 from utils.tools import zapeviados_to_csv
@@ -84,10 +84,16 @@ def show_menu():
             Fore.MAGENTA
             + "[ 5 ] "
             + Fore.GREEN
-            + "Exportar tabela zapenviados para arquivo csv "
-            + Fore.RED
-            + "-\n"
-        )        
+            + "Exportar tabela zapenviados para arquivo csv\n"
+
+        )
+        print(
+            Fore.MAGENTA
+            + "[ 6 ] "
+            + Fore.GREEN
+            + "Atualizar contatos sem número." + Fore.RED+"(colocar o arquivo csv com documento e telefone na pasta src/data.)\n"
+
+        )                 
         print(Fore.MAGENTA + "[ x ] " + Fore.GREEN + "Sair\n")
         print(Fore.MAGENTA + "===================================================\n")
 
@@ -161,6 +167,11 @@ def show_menu():
                 print(Style.RESET_ALL)
                 zapeviados_to_csv()
                 pause()
+
+            case "6":
+                print(Style.RESET_ALL)
+                atualizar_contato()
+                pause()  
 
             case "x":
                 print("Encerrando sistema..")

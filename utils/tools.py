@@ -7,7 +7,12 @@ from controller.controller import get_zapenviados
 from utils.logger import Logger
 from src.data.extract_data import AGORA
 from tqdm import tqdm
+
+
+
 logger = Logger().get_logger()
+
+DATA_FOLDER = r"src/data"
 
 def convert_to_brl(value):
 
@@ -44,4 +49,27 @@ def zapeviados_to_csv():
             print("Erro, ver aquivo de logs para mais detalhes.")
             logger.info("Erro", e)
 
+def atualizar_whatsapp():
+
+    lista_contatos = []
+    for root, dirs, files in os.walk(DATA_FOLDER):
+            for file in files:
+                if "whatsapp" in file.lower() and file.endswith(".csv"):
+                    file_path = os.path.join(root, file)
+
+                    with open(file_path, mode='r', newline='', encoding='utf-8') as arquivo_csv:
+                        reader = csv.reader(arquivo_csv)
+                        lista_contatos = list(reader)
+
+
+                    new_filename = f"WP_Processado{AGORA}.xml"
+                    os.rename(file_path, os.path.join(root, new_filename))
+                    return lista_contatos if lista_contatos else None
+               
+            return print("Nada a processar.")
+                    
+                         
+        
+                
+   
 

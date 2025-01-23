@@ -6,6 +6,7 @@ from requests import session
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from config.configs import dados_contas
+
 from database.db import create_session
 from sqlalchemy import text, update
 from utils.logger import Logger
@@ -103,7 +104,43 @@ def inserir_contato(dados_contato, session):
     except Exception as e:
         session.rollback()
         logger.error(e)
-   
+
+def atualizar_contato():
+    session = create_session()
+    sucessos = 0
+    erros = 0
+    # Evitar erro de importação circular.
+    from utils.tools import atualizar_whatsapp
+
+    """
+    Função responsável por atualizar os contatos dos devedores.
+    """
+
+    dados_contato = atualizar_whatsapp()
+
+    if dados_contato:
+        for dados in tqdm(dados_contato, "Atualizando..", unit="Contato", colour="BLUE"):
+            documento, telefone = dados
+        
+            if telefone[2] in ["8" , "9"]:
+                whatsapp = f"55{telefone}"
+                try:
+                    query = session.query(Contato).filter(Contato.documento == documento).filter(Contato.telefone == "").all()
+                    if len(query) > 0: 
+
+                        session.query(Contato).filter(Contato.documento == documento).filter(Contato.telefone == "").update({Contato.telefone: whatsapp})
+                        session.commit()
+                    else:
+                        contato = Contato(documento=documento, telefone=whatsapp)
+                        session.add(contato)
+                        session.commit()                  
+                    sucessos = sucessos + 1
+                except Exception as e:
+                    erros = erros + 1
+                    session.rollback()
+                    logger.error(str(e))
+
+        return print(f"Atualização concluída. \nErros: {erros}\nSucesso: {sucessos}")
 
 def titulos_registrados():
     """
