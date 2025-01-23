@@ -215,6 +215,7 @@ def get_titulos(**kwargs):
                 for contato in contatos:
                     # VERIFICAR SE EXISTE CONTATO CADASTRADO
                     if len(contato.telefone) > 0:
+                        
                         telefone.append(contato.telefone)
                 else:
                     pass

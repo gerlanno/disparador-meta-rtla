@@ -29,7 +29,7 @@ def parse_error(response_text):
     if error:
         error_message = error.get("message", "Erro desconhecido")
         error_code = error.get("code", "Sem código")
-        return error_code, error_message
+        return str(error_code), str(error_message)
     return None
 
 
@@ -209,10 +209,14 @@ def send_messages(
         )
 
     else:
-
+      
         error_code, error_message = parse_error(response_text)
+        
+        historico_disparos(
+         whatsapp=telefone, error=error_message, response=str(response_text)
+        )         
         if error_code in ["132015", "132016"]:
-            print("Erro no template, selecionando outro..")
+            logger.info("Erro no template!")
             # Caso dê erro no template, desativar o mesmo, e selecionar um outro.
             
             cadastrar_template(
@@ -231,6 +235,4 @@ def send_messages(
                 paramentros_template,
                 business_id,
             )
-        historico_disparos(
-            titulo_id=int(titulo_id), whatsapp=telefone, response=str(response_text)
-        )
+       
