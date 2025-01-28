@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from config.configs import dados_contas
 
 from database.db import create_session
-from sqlalchemy import text, update
+from sqlalchemy import text, update, select, delete
 from utils.logger import Logger
 from model.Models import (
     Cartorio,
@@ -423,9 +423,11 @@ def del_zapfailed():
     
     for number in tqdm(numbers, "delete records", colour="RED"):
         try:
-            session.query(Zapenviado).filter(Zapenviado.messageid==number[0]).filter(Zapenviado.whatsapp==number[1]).delete(synchronize_session=False)
-            logger.info(f"Excluir registro: {number}")
+            result = session.execute(delete(Zapenviado).where(Zapenviado.messageid == number[0]).where(Zapenviado.whatsapp == number[1]))
             session.commit()
+            #session.query(Zapenviado).filter(Zapenviado.messageid==number[0]).filter(Zapenviado.whatsapp==number[1]).delete(synchronize_session=False)
+            logger.info(f"Excluir registro: {number} - {result}")
+            
         except Exception as e:
             logger.info(f"Erro - Excluir registro: - {e}")
 
