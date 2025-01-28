@@ -481,7 +481,7 @@ def att_iswhatsapp():
     contatos = session.query(Contato).all()
 
     for contato in contatos:
-        if iswhatsapp(contato):
+        if iswhatsapp(contato.telefone):
             session.query(Contato).filter(Contato.telefone == contato.telefone).update({Contato.iswhatsapp: True})
         else:  
             session.query(Contato).filter(Contato.telefone == contato.telefone).update({Contato.iswhatsapp: False})
