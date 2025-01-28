@@ -3,7 +3,7 @@ import os
 from xml.dom import NotFoundErr
 
 from tqdm import tqdm
-
+from itertools import islice
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from controller.controller import (
     get_titulos,
@@ -22,6 +22,26 @@ logger = Logger().get_logger()
 
 #
 template_name = ""
+
+def iswhatsapp(numero):
+
+    url = "https://evo2.getbot.site/chat/whatsappNumbers/BotTeste"
+
+    payload = json.dumps({
+    "numbers": [
+        f"{numero}",        
+    ]
+    })
+    headers = {
+    'Content-Type': 'application/json',
+    'apikey': 'A86779CDDD7B-46BF-B566-2016DB210E9D'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+    response_text = json.loads(response.text)
+
+    return response_text[0].get("exists")
+
 
 
 def parse_error(response_text):
@@ -69,7 +89,7 @@ def set_template(business_id):
     raise NotFoundErr
 
 
-def disparar(business_acc_name):
+def disparar(business_acc_name, qtd_disparos):
 
     # Buscar a conta da meta informada.
     accounts = get_business_account(name=business_acc_name)
@@ -94,9 +114,10 @@ def disparar(business_acc_name):
     else:
         titulos = get_titulos()
 
-
+    qtd_disparos = qtd_disparos if qtd_disparos else len(titulos)
+    
     if titulos and template_name:
-        for titulo in tqdm(titulos, "Iniciando disparos..", unit="Disparos ", colour="GREEN"):
+        for titulo in tqdm(islice(titulos, qtd_disparos), total=qtd_disparos, desc="Iniciando disparos..", unit="Disparos ", colour="GREEN"):
             (
                 nome_devedor,
                 titulo_id,
@@ -138,17 +159,19 @@ def disparar(business_acc_name):
 
             if telefones != None:
                 for telefone in telefones:
-
+                    if iswhatsapp(telefone):
                     # Enviar a mensagem para o número de cadastro do titulo.
-                    send_messages(
-                        phone_id,
-                        api_token,
-                        telefone,
-                        template_name,
-                        titulo_id,
-                        paramentros_template,
-                        business_id,
-                    )
+                        send_messages(
+                            phone_id,
+                            api_token,
+                            telefone,
+                            template_name,
+                            titulo_id,
+                            paramentros_template,
+                            business_id,
+                        )
+                    else:
+                        logger.info(f"{telefone} - Número inválido.")
     
     else:
         print("Nada a processar.")
@@ -211,8 +234,8 @@ def send_messages(
     else:
       
         error_code, error_message = parse_error(response_text)
-        
-        historico_disparos(
+
+        historico_disparos(titulo_id=(titulo_id+"9999"),
          whatsapp=telefone, error=error_message, response=str(response_text)
         )         
         if error_code in ["132015", "132016"]:

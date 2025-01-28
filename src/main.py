@@ -191,13 +191,14 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         try:
             business_acc_name = sys.argv[1].upper()
+            qtd_disparos = sys.argv[2].upper()
             business_accs = get_business_account()
             for acc in business_accs:
 
                 # Checar se existe a business acc com o nome informado e inciar os disparos.
                 if business_acc_name in acc.values():
                     print("Iniciando disparos..")
-                    disparar(business_acc_name)
+                    disparar(business_acc_name, (qtd_disparos if qtd_disparos else None))
                     break
 
         except Exception as e:

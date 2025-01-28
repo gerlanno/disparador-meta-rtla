@@ -404,6 +404,8 @@ def get_zapenviados():
     
     return zapenviados
 
+
+
 def del_zapfailed():
     import csv
     session = create_session()
@@ -436,7 +438,6 @@ def del_zapfailed():
 
         
     session.close()
-
 
 def update_zapenviado():
     
