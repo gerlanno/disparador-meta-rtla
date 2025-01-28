@@ -2,7 +2,7 @@ import sys
 import os
 from urllib import response
 from tqdm import tqdm
-from requests import session
+from requests import delete, session
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from config.configs import dados_contas
@@ -215,7 +215,7 @@ def get_titulos(**kwargs):
                 for contato in contatos:
                     # VERIFICAR SE EXISTE CONTATO CADASTRADO
                     if len(contato.telefone) > 0:
-                        
+
                         telefone.append(contato.telefone)
                 else:
                     pass
@@ -403,3 +403,31 @@ def get_zapenviados():
         })
     
     return zapenviados
+
+def del_zapfailed():
+    import csv
+    session = create_session()
+    numbers = set()
+
+    with open("delete_records_ok.csv", mode="r", encoding="utf-8") as arquivo_csv:
+        try:
+            count = 1
+            reader = csv.reader(arquivo_csv)   
+            
+            for row in reader:
+            #for row in tqdm(reader,    "Processando arquivo CSV..", unit="Linhas"):
+                numbers.add((row[0], row[2]))           
+
+        except Exception as e:
+            logger.info("Erro", e)    
+    
+    for number in tqdm(numbers, "delete records", colour="RED"):
+        try:
+            delete_record = session.query(Zapenviado).filter(Zapenviado.messageid==number[0]).filter(Zapenviado.whatsapp==number[1]).delete()
+            logger.info(f"Excluir registro: {delete_record}")
+            session.commit()
+        except Exception as e:
+            logger.info(f"Erro - Excluir registro: {delete_record} - {e}")
+
+        break
+    session.close()
