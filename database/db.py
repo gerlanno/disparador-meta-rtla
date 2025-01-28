@@ -65,7 +65,7 @@ def create_database_if_not_exists():
 # Agora você pode conectar usando o SQLAlchemy
 CONNECTION = f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
 
-engine = create_engine(CONNECTION, echo=True)
+engine = create_engine(CONNECTION)
 
 def check_tables():
 
