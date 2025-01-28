@@ -164,7 +164,7 @@ def disparar(business_acc_name, qtd_disparos):
             if telefones != None:
                 for telefone in telefones:
                     if iswhatsapp(telefone):
-
+                        print("é whatsapp")
                     # Enviar a mensagem para o número de cadastro do titulo.
                         send_messages(
                             phone_id,
@@ -191,7 +191,7 @@ def send_messages(
     paramentros_template,
     business_id,
 ):
-
+    print("Função foi chamada!")
     # URL da API
     api_url = f"https://graph.facebook.com/v20.0/{phone_id}/messages"
 
