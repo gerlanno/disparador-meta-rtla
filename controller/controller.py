@@ -22,9 +22,10 @@ from model.Models import (
 
 logger = Logger().get_logger()
 
+
 def processa_dados_titulo(dados):
     """
-    Função que recebe os dados extraídos dos arquivos 
+    Função que recebe os dados extraídos dos arquivos
     XML e processa o cadastro de cada componente.
     """
     session = create_session()
@@ -88,7 +89,7 @@ def inserir_devedor(id_titulo, dados_devedor, session):
         session.commit()
 
     except Exception as e:
-       logger.error(e)
+        logger.error(e)
 
 
 def inserir_contato(dados_contato, session):
@@ -105,6 +106,7 @@ def inserir_contato(dados_contato, session):
         session.rollback()
         logger.error(e)
 
+
 def atualizar_contato():
     session = create_session()
     sucessos = 0
@@ -119,21 +121,32 @@ def atualizar_contato():
     dados_contato = atualizar_whatsapp()
 
     if dados_contato:
-        for dados in tqdm(dados_contato, "Atualizando..", unit="Contato", colour="BLUE"):
+        for dados in tqdm(
+            dados_contato, "Atualizando..", unit="Contato", colour="BLUE"
+        ):
             documento, telefone = dados
-        
-            if telefone[2] in ["8" , "9"]:
+
+            if telefone[2] in ["8", "9"]:
                 whatsapp = f"55{telefone}"
                 try:
-                    query = session.query(Contato).filter(Contato.documento == documento).filter(Contato.telefone == "").all()
-                    if len(query) > 0: 
+                    query = (
+                        session.query(Contato)
+                        .filter(Contato.documento == documento)
+                        .filter(Contato.telefone == "")
+                        .all()
+                    )
+                    if len(query) > 0:
 
-                        session.query(Contato).filter(Contato.documento == documento).filter(Contato.telefone == "").update({Contato.telefone: whatsapp})
+                        session.query(Contato).filter(
+                            Contato.documento == documento
+                        ).filter(Contato.telefone == "").update(
+                            {Contato.telefone: whatsapp}
+                        )
                         session.commit()
                     else:
                         contato = Contato(documento=documento, telefone=whatsapp)
                         session.add(contato)
-                        session.commit()                  
+                        session.commit()
                     sucessos = sucessos + 1
                 except Exception as e:
                     erros = erros + 1
@@ -141,6 +154,7 @@ def atualizar_contato():
                     logger.error(str(e))
 
         return print(f"Atualização concluída. \nErros: {erros}\nSucesso: {sucessos}")
+
 
 def titulos_registrados():
     """
@@ -157,7 +171,7 @@ def titulos_registrados():
 
 def get_titulos(**kwargs):
     """
-    Função para obter uma lista de titutlos que ainda não 
+    Função para obter uma lista de titutlos que ainda não
     foi feita a comunicação.
     """
 
@@ -165,7 +179,12 @@ def get_titulos(**kwargs):
     session = create_session()
     if kwargs:
         cartorio = kwargs.get("cartorio")
-        titulos = session.query(Titulo).filter(Titulo.cartorio_id == cartorio).order_by(Titulo.id).all()
+        titulos = (
+            session.query(Titulo)
+            .filter(Titulo.cartorio_id == cartorio)
+            .order_by(Titulo.id)
+            .all()
+        )
     else:
         titulos = session.query(Titulo).all()
 
@@ -179,7 +198,7 @@ def get_titulos(**kwargs):
         )
 
         if len(enviado) > 0:
-           ...
+            ...
 
         # EM CASO NEGATIVO, COLETAR AS INFORMAÇÕES PARA REALIZAR O DISPARO
         else:
@@ -230,10 +249,9 @@ def get_titulos(**kwargs):
                     nome_cartorio[0],
                     telefone if telefone else None,
                 )
-        )
-    session.close()        
+            )
+    session.close()
     return lista_titulos if len(lista_titulos) > 0 else False
-    
 
 
 def cadastrar_template(**kwargs):
@@ -295,25 +313,30 @@ def get_templates(business_acc_id):
 def cadastrar_business_account():
     """
     Inserir no databse as contas de whatsapp business e seus dados
-    """ 
+    """
     lista = dados_contas()
     session = create_session()
 
-    for item in tqdm(lista, desc="Cadastrando Whatsapp business account", unit="Contas", colour="GREEN"):
-        try: 
+    for item in tqdm(
+        lista,
+        desc="Cadastrando Whatsapp business account",
+        unit="Contas",
+        colour="GREEN",
+    ):
+        try:
 
             business_acc = Wb_account(**item)
             session.add(business_acc)
             session.commit()
-            
+
         except Exception as e:
             logger.error(e)
 
-    session.close()        
+    session.close()
     return print("Whatsapp Business Accounts Cadastradas")
 
-def get_business_account(**kwargs):
 
+def get_business_account(**kwargs):
     """
     Retorna os dados das contas de whatsapp business cadastradas.
     """
@@ -321,7 +344,7 @@ def get_business_account(**kwargs):
     session = create_session()
     if kwargs:
         name = kwargs.get("name")
-        
+
         business_acc = (
             session.query(Wb_account)
             .filter(Wb_account.name == kwargs.get("name"))
@@ -340,8 +363,8 @@ def get_business_account(**kwargs):
                 "display_phone_number": acc.display_phone_number,
             }
         )
-        
-    session.close()    
+
+    session.close()
     return accounts
 
 
@@ -384,94 +407,96 @@ def historico_disparos(**kwargs):
         session.rollback()
     session.close()
 
+
 def get_zapenviados():
     session = create_session()
     zapenviados = []
     historico_mensagens = session.query(Zapenviado).all()
     for mensagem in historico_mensagens:
-        zapenviados.append({
-            "messageid": mensagem.messageid,
-            "titulo_id": mensagem.titulo_id,
-            "whatsapp": mensagem.whatsapp,
-            "wa_id": mensagem.wa_id,
-            "message_status": mensagem.message_status,
-            "accepted": mensagem.accepted,
-            "rejected": mensagem.rejected,
-            "response": mensagem.response,
-            "error": mensagem.error,
-            "datainsert": str(mensagem.datainsert)   
-        })
-    
+        zapenviados.append(
+            {
+                "messageid": mensagem.messageid,
+                "titulo_id": mensagem.titulo_id,
+                "whatsapp": mensagem.whatsapp,
+                "wa_id": mensagem.wa_id,
+                "message_status": mensagem.message_status,
+                "accepted": mensagem.accepted,
+                "rejected": mensagem.rejected,
+                "response": mensagem.response,
+                "error": mensagem.error,
+                "datainsert": str(mensagem.datainsert),
+            }
+        )
+
     return zapenviados
 
 
 def del_zapfailed():
     import csv
+
     session = create_session()
     numbers = set()
 
     with open("delete_records_ok.csv", mode="r", encoding="utf-8") as arquivo_csv:
         try:
             count = 1
-            reader = csv.reader(arquivo_csv)   
-            
+            reader = csv.reader(arquivo_csv)
+
             for row in reader:
-            #for row in tqdm(reader,    "Processando arquivo CSV..", unit="Linhas"):
-                numbers.add((row[0], row[2]))           
+                # for row in tqdm(reader,    "Processando arquivo CSV..", unit="Linhas"):
+                numbers.add((row[0], row[2]))
 
         except Exception as e:
-            logger.info("Erro", e)    
-    
+            logger.info("Erro", e)
+
     for number in tqdm(numbers, "delete records", colour="RED"):
         try:
-            result = session.query(Zapenviado).filter_by(messageid = number[0]).first()
+            result = session.query(Zapenviado).filter_by(messageid=number[0]).first()
             if result:
                 session.delete(result)
                 session.commit()
-            #session.query(Zapenviado).filter(Zapenviado.messageid==number[0]).filter(Zapenviado.whatsapp==number[1]).delete(synchronize_session=False)
+            # session.query(Zapenviado).filter(Zapenviado.messageid==number[0]).filter(Zapenviado.whatsapp==number[1]).delete(synchronize_session=False)
             logger.info(f"Excluir registro: {number} - {result}")
-            
+
         except Exception as e:
             session.rollback()
             logger.info(f"Erro - Excluir registro: - {e}")
 
-        
     session.close()
 
+
 def update_zapenviado():
-    
-        import csv
-        
 
-        with open("zapenviados_sent.csv", mode="r", encoding="utf-8") as arquivo_csv:
-            try:
-                count = 1
-                reader = csv.DictReader(arquivo_csv)
-        
-                
-                for index, row in enumerate(reader):
-                    
-                    messageid = row.get("messageid")
-                    titulo_id = row.get("titulo_id")
-                    whatsapp = row.get("whatsapp")
-                    wa_id = row.get("wa_id")
-                    message_status = row.get("message_status")
-                    accepted = row.get("accepted")
-                    rejected = row.get("rejected")
-                    response = row.get("response")
-                    error = row.get("error")        
+    import csv
 
-                    historico_disparos(
-                                messageid=messageid,
-                                titulo_id=int(titulo_id),
-                                whatsapp=whatsapp,
-                                wa_id=wa_id,
-                                message_status=message_status,
-                                response=response,
-                            )                
+    with open("zapenviados_sent.csv", mode="r", encoding="utf-8") as arquivo_csv:
+        try:
+            count = 1
+            reader = csv.DictReader(arquivo_csv)
 
-            except Exception as e:
-                logger.info("Erro", e)
+            for index, row in enumerate(reader):
+
+                messageid = row.get("messageid")
+                titulo_id = row.get("titulo_id")
+                whatsapp = row.get("whatsapp")
+                wa_id = row.get("wa_id")
+                message_status = row.get("message_status")
+                accepted = row.get("accepted")
+                rejected = row.get("rejected")
+                response = row.get("response")
+                error = row.get("error")
+
+                historico_disparos(
+                    messageid=messageid,
+                    titulo_id=int(titulo_id),
+                    whatsapp=whatsapp,
+                    wa_id=wa_id,
+                    message_status=message_status,
+                    response=response,
+                )
+
+        except Exception as e:
+            logger.info("Erro", e)
 
 
 def att_iswhatsapp():
@@ -481,12 +506,30 @@ def att_iswhatsapp():
     contatos = session.query(Contato).all()
 
     for contato in contatos:
-        if iswhatsapp(contato.telefone):
-            session.query(Contato).filter(Contato.telefone == contato.telefone).update({Contato.iswhatsapp: True})
-        else:  
-            session.query(Contato).filter(Contato.telefone == contato.telefone).update({Contato.iswhatsapp: False})
+        if contato.telefone:
+            if iswhatsapp(contato.telefone):
+                try:
+
+                    session.query(Contato).filter(
+                        Contato.telefone == contato.telefone
+                    ).update({Contato.iswhatsapp: True})
+                    session.commit()
+                    print("Atualizado - True")
+                except Exception as e:
+                    logger.info(e)
+            else:
+                try:
+                    session.query(Contato).filter(
+                        Contato.telefone == contato.telefone
+                    ).update({Contato.iswhatsapp: False})
+                    session.commit()
+                    print("Atualizado - False")
+                except Exception as e:
+                    logger.info(e)
 
     is_whatsapp = session.query(Contato).filter(Contato.iswhatsapp == True)
     not_whatsapp = session.query(Contato).filter(Contato.iswhatsapp == False)
 
-    print(f"{len(is_whatsapp)} - Números com whatsapp\n {len(not_whatsapp)} - Números sem whatsapp")
+    print(
+        f"{len(is_whatsapp)} - Números com whatsapp\n {len(not_whatsapp)} - Números sem whatsapp"
+    )
