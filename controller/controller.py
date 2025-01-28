@@ -227,7 +227,7 @@ def get_titulos(**kwargs):
                 nome_devedor = devedor.nome
                 contatos = (
                     session.query(Contato.telefone)
-                    .filter(Contato.documento == devedor.documento)
+                    .filter(Contato.documento == devedor.documento).filter(Contato.iswhatsapp == True)
                     .all()
                 )
 
