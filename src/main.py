@@ -191,7 +191,10 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         try:
             business_acc_name = sys.argv[1].upper()
-            qtd_disparos = sys.argv[2].upper()
+            try:
+                qtd_disparos = int(sys.argv[2].upper())
+            except Exception as e:
+                print(e)
             business_accs = get_business_account()
             for acc in business_accs:
 
