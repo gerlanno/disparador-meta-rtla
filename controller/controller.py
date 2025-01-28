@@ -423,8 +423,8 @@ def del_zapfailed():
     
     for number in tqdm(numbers, "delete records", colour="RED"):
         try:
-            result = session.execute(delete(Zapenviado).where(Zapenviado.messageid == number[0]).where(Zapenviado.whatsapp == number[1]))
-            session.commit()
+            result = session.execute(delete(Zapenviado).where(Zapenviado.messageid == number[0]).where(Zapenviado.whatsapp == number[1])).execution_options(synchronize_session="fetch")
+           
             #session.query(Zapenviado).filter(Zapenviado.messageid==number[0]).filter(Zapenviado.whatsapp==number[1]).delete(synchronize_session=False)
             logger.info(f"Excluir registro: {number} - {result}")
             
