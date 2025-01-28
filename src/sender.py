@@ -44,6 +44,7 @@ def iswhatsapp(numero):
     response = requests.request("POST", url, headers=headers, data=payload)
     response_text = json.loads(response.text)
     exists = response_text[0].get("exists")
+    print(response_text)
     if exists == True:
         return True
     else:
