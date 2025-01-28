@@ -436,3 +436,40 @@ def del_zapfailed():
 
         
     session.close()
+
+
+def update_zapenviado():
+    
+        import csv
+        
+
+        with open("zapenviados_sent.csv", mode="r", encoding="utf-8") as arquivo_csv:
+            try:
+                count = 1
+                reader = csv.DictReader(arquivo_csv)
+        
+                
+                for index, row in enumerate(reader):
+                    
+                    messageid = row.get("messageid")
+                    titulo_id = row.get("titulo_id")
+                    whatsapp = row.get("whatsapp")
+                    wa_id = row.get("wa_id")
+                    message_status = row.get("message_status")
+                    accepted = row.get("accepted")
+                    rejected = row.get("rejected")
+                    response = row.get("response")
+                    error = row.get("error")        
+
+                    historico_disparos(
+                                messageid=messageid,
+                                titulo_id=int(titulo_id),
+                                whatsapp=whatsapp,
+                                wa_id=wa_id,
+                                message_status=message_status,
+                                response=response,
+                            )                
+
+            except Exception as e:
+                logger.info("Erro", e)
+    

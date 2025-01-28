@@ -7,7 +7,7 @@ from data.extract_data import extrair_dados
 from database.db import create_database_if_not_exists, check_tables
 from model.Models import create_tables
 from sender import disparar
-from controller.controller import get_business_account, cadastrar_business_account, atualizar_contato, del_zapfailed
+from controller.controller import get_business_account, cadastrar_business_account, atualizar_contato, del_zapfailed, update_zapenviado
 from data.templates import update_templates_list
 from utils.logger import Logger
 from utils.tools import zapeviados_to_csv
@@ -172,9 +172,12 @@ def show_menu():
                 print(Style.RESET_ALL)
                 atualizar_contato()
                 pause()  
-                
+
             case "del":
                 del_zapfailed()
+                pause()
+            case "attzap":
+                update_zapenviado()
                 pause()
 
             case "x":
