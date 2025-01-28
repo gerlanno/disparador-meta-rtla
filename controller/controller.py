@@ -427,7 +427,7 @@ def del_zapfailed():
             logger.info(f"Excluir registro: {number}")
             session.commit()
         except Exception as e:
-            logger.info(f"Erro - Excluir registro: {delete_record} - {e}")
+            logger.info(f"Erro - Excluir registro: - {e}")
 
         break
     session.close()
