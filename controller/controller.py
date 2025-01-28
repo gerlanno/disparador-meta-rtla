@@ -423,7 +423,7 @@ def del_zapfailed():
     
     for number in tqdm(numbers, "delete records", colour="RED"):
         try:
-            result = session.query(Zapenviado).filter_by(Zapenviado.messageid == number[0]).first()
+            result = session.query(Zapenviado).filter_by(messageid = number[0]).first()
             if result:
                 session.delete(result)
                 session.commit()
