@@ -39,8 +39,12 @@ def iswhatsapp(numero):
 
     response = requests.request("POST", url, headers=headers, data=payload)
     response_text = json.loads(response.text)
+    exists = response_text[0].get("exists")
+    if exists == True:
+        return True
+    else:
+        return False
 
-    return response_text[0].get("exists")
 
 
 
@@ -115,7 +119,7 @@ def disparar(business_acc_name, qtd_disparos):
         titulos = get_titulos()
 
     qtd_disparos = qtd_disparos if qtd_disparos else len(titulos)
-    
+
     if titulos and template_name:
         for titulo in tqdm(islice(titulos, qtd_disparos), total=qtd_disparos, desc="Iniciando disparos..", unit="Disparos ", colour="GREEN"):
             (
@@ -160,6 +164,7 @@ def disparar(business_acc_name, qtd_disparos):
             if telefones != None:
                 for telefone in telefones:
                     if iswhatsapp(telefone):
+
                     # Enviar a mensagem para o número de cadastro do titulo.
                         send_messages(
                             phone_id,
