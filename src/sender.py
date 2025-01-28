@@ -172,9 +172,9 @@ def disparar(business_acc_name, qtd_disparos):
 
             if telefones != None:
                 for telefone in telefones:
-                    print(iswhatsapp(telefone))
+                    
                     if iswhatsapp(telefone):
-                        print("é whatsapp")
+                        
                         # Enviar a mensagem para o número de cadastro do titulo.
                         send_messages(
                             phone_id,
