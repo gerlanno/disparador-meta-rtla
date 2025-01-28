@@ -165,7 +165,7 @@ def get_titulos(**kwargs):
     session = create_session()
     if kwargs:
         cartorio = kwargs.get("cartorio")
-        titulos = session.query(Titulo).filter(Titulo.cartorio_id == cartorio).all()
+        titulos = session.query(Titulo).filter(Titulo.cartorio_id == cartorio).order_by(Titulo.id).all()
     else:
         titulos = session.query(Titulo).all()
 
@@ -405,7 +405,6 @@ def get_zapenviados():
     return zapenviados
 
 
-
 def del_zapfailed():
     import csv
     session = create_session()
@@ -473,4 +472,21 @@ def update_zapenviado():
 
             except Exception as e:
                 logger.info("Erro", e)
-    
+
+
+def att_iswhatsapp():
+    from src.sender import iswhatsapp
+
+    session = create_session()
+    contatos = session.query(Contato).all()
+
+    for contato in contatos:
+        if iswhatsapp(contato):
+            session.query(Contato).filter(Contato.telefone == contato.telefone).update({Contato.iswhatsapp: True})
+        else:  
+            session.query(Contato).filter(Contato.telefone == contato.telefone).update({Contato.iswhatsapp: False})
+
+    is_whatsapp = session.query(Contato).filter(Contato.iswhatsapp == True)
+    not_whatsapp = session.query(Contato).filter(Contato.iswhatsapp == False)
+
+    print(f"{len(is_whatsapp)} - Números com whatsapp\n {len(not_whatsapp)} - Números sem whatsapp")

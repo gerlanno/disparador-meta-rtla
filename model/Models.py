@@ -5,6 +5,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from sqlalchemy import (
     
+    Boolean,
     Numeric,
     Text,
     create_engine,
@@ -62,7 +63,9 @@ class Contato(Base):
     documento = Column(String(14), nullable=False, primary_key=True)
     telefone = Column(String(), primary_key=True)
     email = Column(String(100))
+    iswhatsapp = Column(Boolean, default=True)  # Nova coluna adicionada com valor padrão
     PrimaryKeyConstraint("documento", "telefone")
+
 
 
 class Zapenviado(Base):

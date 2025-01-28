@@ -7,7 +7,7 @@ from data.extract_data import extrair_dados
 from database.db import create_database_if_not_exists, check_tables
 from model.Models import create_tables
 from sender import disparar
-from controller.controller import get_business_account, cadastrar_business_account, atualizar_contato, del_zapfailed, update_zapenviado
+from controller.controller import get_business_account, cadastrar_business_account, atualizar_contato, del_zapfailed, update_zapenviado, att_iswhatsapp
 from data.templates import update_templates_list
 from utils.logger import Logger
 from utils.tools import zapeviados_to_csv
@@ -179,6 +179,9 @@ def show_menu():
             case "attzap":
                 update_zapenviado()
                 pause()
+            case "iswhats":
+                att_iswhatsapp()
+                pause()            
 
             case "x":
                 print("Encerrando sistema..")
