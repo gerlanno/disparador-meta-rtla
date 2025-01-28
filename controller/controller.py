@@ -424,7 +424,7 @@ def del_zapfailed():
     for number in tqdm(numbers, "delete records", colour="RED"):
         try:
             delete_record = session.query(Zapenviado).filter(Zapenviado.messageid==number[0]).filter(Zapenviado.whatsapp==number[1]).delete()
-            logger.info(f"Excluir registro: {delete_record}")
+            logger.info(f"Excluir registro: {number}")
             session.commit()
         except Exception as e:
             logger.info(f"Erro - Excluir registro: {delete_record} - {e}")
