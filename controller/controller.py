@@ -232,23 +232,24 @@ def get_titulos(**kwargs):
                 )
 
                 for contato in contatos:
+                    print(contato)
                     # VERIFICAR SE EXISTE CONTATO CADASTRADO
                     if len(contato.telefone) > 0:
-
                         telefone.append(contato.telefone)
                 else:
                     pass
-            lista_titulos.append(
-                (
-                    nome_devedor,
-                    titulo_id,
-                    nome_credor,
-                    valor_titulo,
-                    numero_titulo,
-                    url_cartorio[0],
-                    nome_cartorio[0],
-                    telefone if telefone else None,
-                )
+            if telefone:    
+                lista_titulos.append(
+                    (
+                        nome_devedor,
+                        titulo_id,
+                        nome_credor,
+                        valor_titulo,
+                        numero_titulo,
+                        url_cartorio[0],
+                        nome_cartorio[0],
+                        telefone if telefone else None,
+                    )
             )
     session.close()
     return lista_titulos if len(lista_titulos) > 0 else False
