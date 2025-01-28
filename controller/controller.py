@@ -434,5 +434,5 @@ def del_zapfailed():
             session.rollback()
             logger.info(f"Erro - Excluir registro: - {e}")
 
-        break
+        
     session.close()
