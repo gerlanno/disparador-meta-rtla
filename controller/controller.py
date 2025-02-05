@@ -568,8 +568,7 @@ def teste_filtro_titulos():
     print(len(titulos), " - Todos Titulos.")
     print(len(titulos_para_enviar), " - Titulos que não foram feito comunicação.")
 
-    for item in subquery:
-        print(item)
+    print(type(subquery))
 
 
 teste_filtro_titulos()
