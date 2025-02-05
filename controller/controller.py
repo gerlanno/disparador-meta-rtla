@@ -542,12 +542,11 @@ def att_iswhatsapp():
     )
 
 
-def teste_filtro_titulos(cartorio):
+def teste_filtro_titulos():
     session = create_session()
 
     titulos = (
-        session.query(Titulo)
-        .filter(Titulo.cartorio_id == cartorio)
+        session.query(Titulo)    
         .order_by(Titulo.id)
         .all()
     )
@@ -563,4 +562,4 @@ def teste_filtro_titulos(cartorio):
     print(len(titulos_para_enviar), " - Titulos que não foram feito comunicação.")
 
 
-teste_filtro_titulos(5)
+teste_filtro_titulos()
