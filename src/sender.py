@@ -1,7 +1,6 @@
 import sys
 import os
 from xml.dom import NotFoundErr
-
 from tqdm import tqdm
 from itertools import islice
 

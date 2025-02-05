@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from config.configs import dados_contas
 
 from database.db import create_session
-from sqlalchemy import text, update, select, delete
+from sqlalchemy import text, update, select, delete, func
 from utils.logger import Logger
 from model.Models import (
     Cartorio,
@@ -218,7 +218,12 @@ def get_titulos(**kwargs):
             )
 
             devedores = (
-                session.query(Devedor).filter(Devedor.titulo_id == titulo.id).all()
+                session.query(Devedor)
+                .filter(
+                    Devedor.titulo_id == titulo.id,
+                    func.char_length(Devedor.documento) == 11,
+                )
+                .all()
             )
             telefone = []
             for devedor in devedores:
@@ -227,7 +232,8 @@ def get_titulos(**kwargs):
                 nome_devedor = devedor.nome
                 contatos = (
                     session.query(Contato.telefone)
-                    .filter(Contato.documento == devedor.documento).filter(Contato.iswhatsapp == True)
+                    .filter(Contato.documento == devedor.documento)
+                    .filter(Contato.iswhatsapp == True)
                     .all()
                 )
 
@@ -238,7 +244,7 @@ def get_titulos(**kwargs):
                         telefone.append(contato.telefone)
                 else:
                     pass
-            if telefone:    
+            if telefone:
                 lista_titulos.append(
                     (
                         nome_devedor,
@@ -250,7 +256,7 @@ def get_titulos(**kwargs):
                         nome_cartorio[0],
                         telefone if telefone else None,
                     )
-            )
+                )
     session.close()
     return lista_titulos if len(lista_titulos) > 0 else False
 
@@ -534,3 +540,27 @@ def att_iswhatsapp():
     print(
         f"{len(is_whatsapp)} - Números com whatsapp\n {len(not_whatsapp)} - Números sem whatsapp"
     )
+
+
+def teste_filtro_titulos(cartorio):
+    session = create_session()
+
+    titulos = (
+        session.query(Titulo)
+        .filter(Titulo.cartorio_id == cartorio)
+        .order_by(Titulo.id)
+        .all()
+    )
+
+    subquery = (
+        session.query(Zapenviado.titulo_id)
+        .filter(Zapenviado.titulo_id == Titulo.id)
+        .exists()
+    )
+    titulos_para_enviar = session.query(Titulo).filter(~subquery).all()
+
+    print(len(titulos), " - Todos Titulos.")
+    print(len(titulos_para_enviar, " - Titulos que não foram feito comunicação."))
+
+
+teste_filtro_titulos(5)
