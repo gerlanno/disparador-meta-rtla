@@ -561,5 +561,8 @@ def teste_filtro_titulos():
     print(len(titulos), " - Todos Titulos.")
     print(len(titulos_para_enviar), " - Titulos que não foram feito comunicação.")
 
+    for titulo in titulos_para_enviar:
+        print(f"\nExemplo de titulo: \n {titulo.id} - {titulo.protocolo} - {titulo.credor}")
+
 
 teste_filtro_titulos()
