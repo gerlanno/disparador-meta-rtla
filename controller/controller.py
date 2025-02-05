@@ -556,7 +556,7 @@ def teste_filtro_titulos():
         .filter(Zapenviado.titulo_id == Titulo.id)
         .exists()
     )
-    titulos_para_enviar = session.query(Titulo).filter(~subquery).all()
+    titulos_para_enviar = session.query(Titulo).filter(~subquery).filter(Titulo.cartorio_id == 5).all()
 
     print(len(titulos), " - Todos Titulos.")
     print(len(titulos_para_enviar), " - Titulos que não foram feito comunicação.")
