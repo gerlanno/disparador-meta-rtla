@@ -177,6 +177,13 @@ def get_titulos(**kwargs):
 
     lista_titulos = []
     session = create_session()
+
+    subquery = (
+        session.query(Zapenviado.titulo_id)
+        .filter(Zapenviado.titulo_id == Titulo.id)
+        .exists()
+    )
+
     if kwargs:
         cartorio = kwargs.get("cartorio")
         titulos = (
@@ -561,8 +568,8 @@ def teste_filtro_titulos():
     print(len(titulos), " - Todos Titulos.")
     print(len(titulos_para_enviar), " - Titulos que não foram feito comunicação.")
 
-    for titulo in titulos_para_enviar[:30]:
-        print(f"\nExemplo de titulo: \n {titulo.id} - {titulo.protocolo} - {titulo.credor}")
+    for item in subquery:
+        print(item)
 
 
 teste_filtro_titulos()
