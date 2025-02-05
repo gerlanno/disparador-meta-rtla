@@ -560,7 +560,7 @@ def teste_filtro_titulos(cartorio):
     titulos_para_enviar = session.query(Titulo).filter(~subquery).all()
 
     print(len(titulos), " - Todos Titulos.")
-    print(len(titulos_para_enviar, " - Titulos que não foram feito comunicação."))
+    print(len(titulos_para_enviar), " - Titulos que não foram feito comunicação.")
 
 
 teste_filtro_titulos(5)
