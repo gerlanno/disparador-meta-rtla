@@ -7,16 +7,15 @@ sys.path.insert(
 import xml.etree.ElementTree as et
 from tqdm import tqdm
 from controller.controller import processa_dados_titulo, titulos_registrados
-from datetime import datetime
+from datetime import datetime, tzinfo
 
 
-
-#Diretório onde devem estar os arquivos xml 
-#que possuem os dados a ser extraídos.
+# Diretório onde devem estar os arquivos xml
+# que possuem os dados a ser extraídos.
 DATA_FOLDER = r"src/data"
 
-#Momento atual, com data e hora completa, 
-#será usado para renomear o arquivo processado.
+# Momento atual, com data e hora completa,
+# será usado para renomear o arquivo processado.
 AGORA = datetime.ctime(datetime.now()).replace(":", "").replace(" ", "")
 
 
@@ -43,7 +42,7 @@ def extract_cancelamento(file):
         valorprotestado = float((titulo.find("valorprotestado").text).replace(",", "."))
         numerotitulo = titulo.find("numerotitulo").text.strip()
         dataprotesto = titulo.find("dataprotesto").text
-        mesano = dataprotesto[0:-2].replace("-", "")  # <------------- CAMPO NOVO
+        mesano = dataprotesto[0:-2].replace("-", "")
         valorboleto = float((titulo.find("valorboleto").text))
 
         # Extrair informações dos devedores
@@ -71,8 +70,8 @@ def extract_cancelamento(file):
                 if not telefone.text == None and telefone.text.isnumeric():
                     if telefone.text[2] != "3":
                         whatsapp = f"55{telefone.text}"
-                
-                lista_contatos.append((documento_devedor, whatsapp))
+
+                        lista_contatos.append((documento_devedor, whatsapp))
 
             lista_devedores.append((documento_devedor, nome_devedor))
         lista_titulos.append(
@@ -95,7 +94,7 @@ def extract_cancelamento(file):
         lista_geral.append((lista_titulos[i], lista_devedores, lista_contatos))
 
     for index, titulo in enumerate(
-        tqdm(lista_geral, desc="Processando dados...", unit="Registro", colour="BLUE")
+        tqdm(lista_geral, desc="Processando dados", unit="Registro", colour="BLUE")
     ):
 
         if index == 0:

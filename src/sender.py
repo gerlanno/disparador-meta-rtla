@@ -24,15 +24,18 @@ logger = Logger().get_logger()
 template_name = ""
 
 
-def iswhatsapp(numero):
+def iswhatsapp(phone_numbers):
 
     url = "https://evo2.getbot.site/chat/whatsappNumbers/BotTeste"
 
+    if not isinstance(phone_numbers, list):
+        list_or_number = [phone_numbers]
+    else:
+        list_or_number = phone_numbers
+
     payload = json.dumps(
         {
-            "numbers": [
-                f"{numero}",
-            ]
+            "numbers": list_or_number
         }
     )
     headers = {
@@ -43,11 +46,12 @@ def iswhatsapp(numero):
     response = requests.request("POST", url, headers=headers, data=payload)
     response_text = json.loads(response.text)
     exists = response_text[0].get("exists")
-    print(response_text)
+
     if exists == True:
         return True
     else:
         return False
+
 
 
 def parse_error(response_text):
@@ -120,6 +124,7 @@ def disparar(business_acc_name, qtd_disparos):
     else:
         titulos = get_titulos()
 
+    # Se não for informado a quantidade total de disparos, disparar todos os titulos retornados.
     qtd_disparos = qtd_disparos if qtd_disparos else len(titulos)
 
     if titulos and template_name:
@@ -171,8 +176,7 @@ def disparar(business_acc_name, qtd_disparos):
 
             if telefones != None:
                 for telefone in telefones:
-                                     
-                        
+
                     # Enviar a mensagem para o número de cadastro do titulo.
                     send_messages(
                         phone_id,
@@ -183,7 +187,6 @@ def disparar(business_acc_name, qtd_disparos):
                         paramentros_template,
                         business_id,
                     )
-          
 
     else:
         print("Nada a processar.")
@@ -198,7 +201,7 @@ def send_messages(
     paramentros_template,
     business_id,
 ):
-    
+
     # URL da API
     api_url = f"https://graph.facebook.com/v20.0/{phone_id}/messages"
 
@@ -247,13 +250,14 @@ def send_messages(
 
         error_code, error_message = parse_error(response_text)
 
-        historico_disparos(
-            titulo_id=(titulo_id + "9999"),
-            whatsapp=telefone,
-            error=error_message,
-            response=str(response_text),
+        # Grava erros no log.
+        logger.error(
+            f"Titulo id: {titulo_id}; Whatsapp: {telefone}; Error Code: {error_code}; Error message: {error_message}; Response Text: {str(response_text)}"
         )
+
+        # Verifica se foi erro de template.
         if error_code in ["132015", "132016"]:
+
             logger.info("Erro no template!")
             # Caso dê erro no template, desativar o mesmo, e selecionar um outro.
 

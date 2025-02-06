@@ -95,10 +95,13 @@ def inserir_devedor(id_titulo, dados_devedor, session):
 def inserir_contato(dados_contato, session):
     """
     Função responsável por cadastrar os contatos dos devedores.
+
     """
+    from src.sender import iswhatsapp
     documento, telefone = dados_contato
+    iswhats = iswhatsapp(telefone)
     try:
-        contato = Contato(documento=documento, telefone=telefone)
+        contato = Contato(documento=documento, telefone=telefone, iswhatsapp=iswhats)
         session.add(contato)
         session.commit()
 
@@ -178,7 +181,8 @@ def get_titulos(**kwargs):
     lista_titulos = []
     session = create_session()
 
-    subquery = (
+    # Consultar os ids que não estão na tabela zapenviados.
+    zapenviado_filter = (
         session.query(Zapenviado.titulo_id)
         .filter(Zapenviado.titulo_id == Titulo.id)
         .exists()
@@ -186,84 +190,85 @@ def get_titulos(**kwargs):
 
     if kwargs:
         cartorio = kwargs.get("cartorio")
-        titulos = (
+        
+        # Filtragem de titulos por cartório
+        titulos_para_enviar = (
             session.query(Titulo)
+            .filter(~zapenviado_filter)
             .filter(Titulo.cartorio_id == cartorio)
-            .order_by(Titulo.id)
             .all()
         )
+
     else:
-        titulos = session.query(Titulo).all()
 
-    for titulo in titulos:
-
-        # CHECA SE JÁ FOI FEITA A COMUNICAÇÃO DO TITULO ATUAL
-        enviado = (
-            session.query(Zapenviado.titulo_id)
-            .filter(Zapenviado.titulo_id == titulo.id)
+        #Lista de titulos sem filtro de cartório, somente os que não foram enviados ainda.
+        titulos_para_enviar = (
+            session.query(Titulo)
+            .filter(~zapenviado_filter)            
             .all()
-        )
+        )        
+     
 
-        if len(enviado) > 0:
-            ...
+    for titulo in titulos_para_enviar:
 
         # EM CASO NEGATIVO, COLETAR AS INFORMAÇÕES PARA REALIZAR O DISPARO
-        else:
-            titulo_id = titulo.id
-            numero_titulo = titulo.numerotitulo
-            nome_credor = titulo.credor
-            valor_titulo = str(titulo.valorprotestado)
-            url_cartorio = (
-                session.query(Cartorio.website)
-                .filter(Cartorio.id == titulo.cartorio_id)
-                .one()
-            )
-            nome_cartorio = (
-                session.query(Cartorio.nome)
-                .filter(Cartorio.id == titulo.cartorio_id)
-                .one()
-            )
+       
+        titulo_id = titulo.id
+        numero_titulo = titulo.numerotitulo
+        nome_credor = titulo.credor
+        valor_titulo = str(titulo.valorprotestado)
+        url_cartorio = (
+            session.query(Cartorio.website)
+            .filter(Cartorio.id == titulo.cartorio_id)
+            .one()
+        )
+        nome_cartorio = (
+            session.query(Cartorio.nome)
+            .filter(Cartorio.id == titulo.cartorio_id)
+            .one()
+        )
 
-            devedores = (
-                session.query(Devedor)
-                .filter(
-                    Devedor.titulo_id == titulo.id,
-                    func.char_length(Devedor.documento) == 11,
-                )
+        devedores = (
+            session.query(Devedor)
+            .filter(
+                Devedor.titulo_id == titulo.id,
+                func.char_length(Devedor.documento) == 11,
+            )
+            .all()
+        )
+        telefone = []
+        for devedor in devedores:
+
+            documento = devedor.documento
+            nome_devedor = devedor.nome
+            contatos = (
+                session.query(Contato.telefone)
+                .filter(Contato.documento == devedor.documento)
+                .filter(Contato.iswhatsapp == True)
                 .all()
             )
-            telefone = []
-            for devedor in devedores:
 
-                documento = devedor.documento
-                nome_devedor = devedor.nome
-                contatos = (
-                    session.query(Contato.telefone)
-                    .filter(Contato.documento == devedor.documento)
-                    .filter(Contato.iswhatsapp == True)
-                    .all()
+            for contato in contatos:
+                
+                # VERIFICAR SE EXISTE CONTATO CADASTRADO
+                if len(contato.telefone) > 0:
+                    telefone.append(contato.telefone)
+            else:
+                pass
+        if telefone:
+            lista_titulos.append(
+                (
+                    nome_devedor,
+                    titulo_id,
+                    nome_credor,
+                    valor_titulo,
+                    numero_titulo,
+                    url_cartorio[0],
+                    nome_cartorio[0],
+                    telefone if telefone else None,
                 )
+            )
 
-                for contato in contatos:
-                    print(contato)
-                    # VERIFICAR SE EXISTE CONTATO CADASTRADO
-                    if len(contato.telefone) > 0:
-                        telefone.append(contato.telefone)
-                else:
-                    pass
-            if telefone:
-                lista_titulos.append(
-                    (
-                        nome_devedor,
-                        titulo_id,
-                        nome_credor,
-                        valor_titulo,
-                        numero_titulo,
-                        url_cartorio[0],
-                        nome_cartorio[0],
-                        telefone if telefone else None,
-                    )
-                )
     session.close()
     return lista_titulos if len(lista_titulos) > 0 else False
 
@@ -549,26 +554,7 @@ def att_iswhatsapp():
     )
 
 
-def teste_filtro_titulos():
-    session = create_session()
-
-    titulos = (
-        session.query(Titulo)    
-        .order_by(Titulo.id)
-        .all()
-    )
-
-    subquery = (
-        session.query(Zapenviado.titulo_id)
-        .filter(Zapenviado.titulo_id == Titulo.id)
-        .exists()
-    )
-    titulos_para_enviar = session.query(Titulo).filter(~subquery).filter(Titulo.cartorio_id == 8).all()
-
-    print(len(titulos), " - Todos Titulos.")
-    print(len(titulos_para_enviar), " - Titulos que não foram feito comunicação.")
-
-    print(type(subquery))
 
 
-teste_filtro_titulos()
+
+

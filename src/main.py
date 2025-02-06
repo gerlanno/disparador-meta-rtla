@@ -173,15 +173,17 @@ def show_menu():
                 atualizar_contato()
                 pause()  
 
+            ##### #Funções Ocultas######
             case "del":
                 del_zapfailed()
                 pause()
             case "attzap":
                 update_zapenviado()
                 pause()
-            case "iswhats":
+            case "iswhats":                
                 att_iswhatsapp()
                 pause()            
+            ############################
 
             case "x":
                 print("Encerrando sistema..")
