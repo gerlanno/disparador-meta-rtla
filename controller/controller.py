@@ -525,7 +525,7 @@ def att_iswhatsapp():
     session = create_session()
     contatos = session.query(Contato).all()
 
-    for contato in contatos:
+    for contato in tqdm(contatos, desc="Verificando números", colour="GREEN"):
         if contato.telefone:
             if iswhatsapp(contato.telefone):
                 try:
@@ -534,7 +534,7 @@ def att_iswhatsapp():
                         Contato.telefone == contato.telefone
                     ).update({Contato.iswhatsapp: True})
                     session.commit()
-                    print("Atualizado - True")
+                    
                 except Exception as e:
                     logger.info(e)
             else:
@@ -543,7 +543,7 @@ def att_iswhatsapp():
                         Contato.telefone == contato.telefone
                     ).update({Contato.iswhatsapp: False})
                     session.commit()
-                    print("Atualizado - False")
+                    
                 except Exception as e:
                     logger.info(e)
 
