@@ -116,7 +116,7 @@ def atualizar_contato():
     erros = 0
     # Evitar erro de importação circular.
     from utils.tools import atualizar_whatsapp
-
+   
     """
     Função responsável por atualizar os contatos dos devedores.
     """
@@ -131,6 +131,7 @@ def atualizar_contato():
 
             if telefone[2] in ["8", "9"]:
                 whatsapp = f"55{telefone}"
+                
                 try:
                     query = (
                         session.query(Contato)
