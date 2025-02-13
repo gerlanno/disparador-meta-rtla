@@ -275,6 +275,9 @@ def get_titulos(**kwargs):
     session.close()
     return lista_titulos if len(lista_titulos) > 0 else False
 
+def titulos_para_enviar():
+    titulos = get_titulos()
+    return print(f"Titulos a enviar: {len(titulos)}")
 
 def cadastrar_template(**kwargs):
     """
