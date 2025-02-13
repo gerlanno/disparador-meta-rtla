@@ -4,6 +4,8 @@ from urllib import response
 from tqdm import tqdm
 from requests import delete, session
 
+
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from config.configs import dados_contas
 
@@ -519,7 +521,10 @@ def update_zapenviado():
             logger.info("Erro", e)
 
 
-def att_iswhatsapp():
+def __att_iswhatsapp():
+
+    # Obsoleta por enquanto.
+
     from src.sender import iswhatsapp
 
     session = create_session()
@@ -555,7 +560,28 @@ def att_iswhatsapp():
     )
 
 
+def att_iswhatsapp():
+    from src.sender import iswhatsapp
 
+    session = create_session()
+    contatos = session.query(Contato).all()
 
+    check_whats = []
+    whats_true = []
+    step = 500
+    for contato in contatos:
+        check_whats.append(contato.telefone)
 
+    for i in range(0, len(check_whats), step):
+        whats_true.append(iswhatsapp(check_whats[i:i + step]))
+       
 
+    for index, check in enumerate(whats_true):
+          for response in tqdm(check, desc=f"Lista {index} de {len(whats_true)}"):
+                try:
+                    session.query(Contato).filter(
+                        Contato.telefone == response.get('number')
+                    ).update({Contato.iswhatsapp: response.get('exists')})
+                    session.commit()
+                except Exception as e:
+                    logger.error(e, response)              
