@@ -5,7 +5,6 @@ from tqdm import tqdm
 from requests import delete, session
 
 
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from config.configs import dados_contas
 
@@ -100,6 +99,7 @@ def inserir_contato(dados_contato, session):
 
     """
     from src.sender import iswhatsapp
+
     documento, telefone = dados_contato
     iswhats = iswhatsapp(telefone)
     try:
@@ -118,7 +118,7 @@ def atualizar_contato():
     erros = 0
     # Evitar erro de importação circular.
     from utils.tools import atualizar_whatsapp
-   
+
     """
     Função responsável por atualizar os contatos dos devedores.
     """
@@ -133,7 +133,7 @@ def atualizar_contato():
 
             if telefone[2] in ["8", "9"]:
                 whatsapp = f"55{telefone}"
-                
+
                 try:
                     query = (
                         session.query(Contato)
@@ -193,7 +193,7 @@ def get_titulos(**kwargs):
 
     if kwargs:
         cartorio = kwargs.get("cartorio")
-        
+
         # Filtragem de titulos por cartório
         titulos_para_enviar = (
             session.query(Titulo)
@@ -204,18 +204,13 @@ def get_titulos(**kwargs):
 
     else:
 
-        #Lista de titulos sem filtro de cartório, somente os que não foram enviados ainda.
-        titulos_para_enviar = (
-            session.query(Titulo)
-            .filter(~zapenviado_filter)            
-            .all()
-        )        
-     
+        # Lista de titulos sem filtro de cartório, somente os que não foram enviados ainda.
+        titulos_para_enviar = session.query(Titulo).filter(~zapenviado_filter).all()
 
     for titulo in titulos_para_enviar:
 
         # EM CASO NEGATIVO, COLETAR AS INFORMAÇÕES PARA REALIZAR O DISPARO
-       
+
         titulo_id = titulo.id
         numero_titulo = titulo.numerotitulo
         nome_credor = titulo.credor
@@ -226,9 +221,7 @@ def get_titulos(**kwargs):
             .one()
         )
         nome_cartorio = (
-            session.query(Cartorio.nome)
-            .filter(Cartorio.id == titulo.cartorio_id)
-            .one()
+            session.query(Cartorio.nome).filter(Cartorio.id == titulo.cartorio_id).one()
         )
 
         devedores = (
@@ -252,10 +245,13 @@ def get_titulos(**kwargs):
             )
 
             for contato in contatos:
-                
+
                 # VERIFICAR SE EXISTE CONTATO CADASTRADO
-                if len(contato.telefone) > 0:
-                    telefone.append(contato.telefone)
+                if len(telefone) < 2:
+
+                    if len(contato.telefone) > 0:
+                        telefone.append(contato.telefone)
+
             else:
                 pass
         if telefone:
@@ -275,9 +271,12 @@ def get_titulos(**kwargs):
     session.close()
     return lista_titulos if len(lista_titulos) > 0 else False
 
+
 def titulos_para_enviar():
+    # Retornar quantos titulos para disparar mensagens.
     titulos = get_titulos()
     return print(f"Titulos a enviar: {len(titulos)}")
+
 
 def cadastrar_template(**kwargs):
     """
@@ -542,7 +541,7 @@ def __att_iswhatsapp():
                         Contato.telefone == contato.telefone
                     ).update({Contato.iswhatsapp: True})
                     session.commit()
-                    
+
                 except Exception as e:
                     logger.info(e)
             else:
@@ -551,7 +550,7 @@ def __att_iswhatsapp():
                         Contato.telefone == contato.telefone
                     ).update({Contato.iswhatsapp: False})
                     session.commit()
-                    
+
                 except Exception as e:
                     logger.info(e)
 
@@ -576,15 +575,14 @@ def att_iswhatsapp():
         check_whats.append(contato.telefone)
 
     for i in range(0, len(check_whats), step):
-        whats_true.append(iswhatsapp(check_whats[i:i + step]))
-       
+        whats_true.append(iswhatsapp(check_whats[i : i + step]))
 
     for index, check in enumerate(whats_true):
-          for response in tqdm(check, desc=f"Lista {index} de {len(whats_true)}"):
-                try:
-                    session.query(Contato).filter(
-                        Contato.telefone == response.get('number')
-                    ).update({Contato.iswhatsapp: response.get('exists')})
-                    session.commit()
-                except Exception as e:
-                    logger.error(e, response)              
+        for response in tqdm(check, desc=f"Lista {index} de {len(whats_true)}"):
+            try:
+                session.query(Contato).filter(
+                    Contato.telefone == response.get("number")
+                ).update({Contato.iswhatsapp: response.get("exists")})
+                session.commit()
+            except Exception as e:
+                logger.error(e, response)
