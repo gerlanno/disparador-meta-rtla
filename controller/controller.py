@@ -275,8 +275,10 @@ def get_titulos(**kwargs):
 def titulos_para_enviar():
     # Retornar quantos titulos para disparar mensagens.
     titulos = get_titulos()
-    return print(f"Titulos a enviar: {len(titulos)}")
-
+    if titulos:
+        return print(f"Titulos a enviar: {len(titulos)}")
+    else:
+        return print("Nenhum titulo para enviar")
 
 def cadastrar_template(**kwargs):
     """

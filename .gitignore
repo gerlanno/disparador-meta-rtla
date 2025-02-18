@@ -1,5 +1,6 @@
 .env
 /database/*.sql
+/database/*.bkp
 view.json
 /tests/*
 *.log
@@ -10,3 +11,4 @@ __pycache__/
 *.csv
 *.log
 *.sql
+*.bkp
