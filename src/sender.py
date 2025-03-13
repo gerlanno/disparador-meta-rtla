@@ -17,6 +17,8 @@ from utils.tools import convert_to_brl
 import requests
 import json
 from utils.logger import Logger
+from time import sleep
+
 
 logger = Logger().get_logger()
 
@@ -179,7 +181,7 @@ def disparar(business_acc_name, qtd_disparos):
 
             if telefones != None:
                 for telefone in telefones:
-
+                    
                     # Enviar a mensagem para o número de cadastro do titulo.
                     send_messages(
                         phone_id,

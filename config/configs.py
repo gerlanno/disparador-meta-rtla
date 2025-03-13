@@ -17,8 +17,10 @@ db_config = {
     "password": os.getenv("dbpass"),
 }
 
-# Dados Whatsapp Business
+# Diretório com os arquivos para extração de dados.
+FILES_DIR = os.getenv("FILES_DIR")
 
+# Dados Whatsapp Business
 wa_config = {
     "OSIAN1": {
         "NOME": "OSIAN ARARIPE",

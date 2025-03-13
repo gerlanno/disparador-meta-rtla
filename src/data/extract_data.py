@@ -8,11 +8,11 @@ import xml.etree.ElementTree as et
 from tqdm import tqdm
 from controller.controller import processa_dados_titulo, titulos_registrados
 from datetime import datetime, tzinfo
-
+from config.configs import FILES_DIR
 
 # Diretório onde devem estar os arquivos xml
 # que possuem os dados a ser extraídos.
-DATA_FOLDER = r"src/data"
+DATA_FOLDER = FILES_DIR
 
 # Momento atual, com data e hora completa,
 # será usado para renomear o arquivo processado.
@@ -111,6 +111,7 @@ def extract_cancelamento(file):
 
 # Itera pelos arquivos da pasta data, procurando pela lista de cancelamento.
 def extrair_dados():
+    DATA_FOLDER = r'src/data'
     sucess = 0
     for root, dirs, files in os.walk(DATA_FOLDER):
 
@@ -125,6 +126,7 @@ def extrair_dados():
                 sucess = sucess + 1
 
     if not sucess > 0:
-        return print("Nenhum arquivo processado.")
+        return {"sucess": False, "message": "Nenhum arquivo processado."}
     else:
-        return print(f"Tarefa concluída, arquivos processados: {sucess}.")
+        return {"sucess": True, "message": f"Tarefa concluída, arquivos processados: {sucess}."}
+

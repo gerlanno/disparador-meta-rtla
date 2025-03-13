@@ -101,9 +101,9 @@ def inserir_contato(dados_contato, session):
     from src.sender import iswhatsapp
 
     documento, telefone = dados_contato
-    iswhats = iswhatsapp(telefone)
+    #iswhats = iswhatsapp(telefone)
     try:
-        contato = Contato(documento=documento, telefone=telefone, iswhatsapp=iswhats)
+        contato = Contato(documento=documento, telefone=telefone)
         session.add(contato)
         session.commit()
 
