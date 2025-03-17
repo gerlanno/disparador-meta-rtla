@@ -101,7 +101,7 @@ def inserir_contato(dados_contato, session):
     from src.sender import iswhatsapp
 
     documento, telefone = dados_contato
-    #iswhats = iswhatsapp(telefone)
+    # iswhats = iswhatsapp(telefone)
     try:
         contato = Contato(documento=documento, telefone=telefone)
         session.add(contato)
@@ -252,8 +252,8 @@ def get_titulos(**kwargs):
                     if len(contato.telefone) > 0:
                         telefone.append(contato.telefone)
 
-            else:
-                pass
+                else:
+                    pass
         if telefone:
             lista_titulos.append(
                 (
@@ -279,6 +279,7 @@ def titulos_para_enviar():
         return print(f"Titulos a enviar: {len(titulos)}")
     else:
         return print("Nenhum titulo para enviar")
+
 
 def cadastrar_template(**kwargs):
     """

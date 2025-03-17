@@ -62,13 +62,13 @@ def atualizar_whatsapp():
                         lista_contatos = list(reader)
 
                  
-                    new_filename = f"WP_Processado{AGORA}.xml"
+                    new_filename = f"contatos_importados-{AGORA}.csv"
                     os.rename(file_path, os.path.join(root, new_filename))
                     return lista_contatos if lista_contatos else None
                
             return print("Nada a processar.")
 
-atualizar_whatsapp()                    
+             
                          
         
                 
