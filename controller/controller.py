@@ -187,7 +187,7 @@ def get_titulos(**kwargs):
     # Consultar os ids que não estão na tabela zapenviados.
     zapenviado_filter = (
         session.query(Zapenviado.titulo_id)
-        .filter(Zapenviado.titulo_id == Titulo.id)
+        .filter(Zapenviado.titulo_id == Titulo.id, Zapenviado.mesano_insert == Titulo.mesano_insert)
         .exists()
     )
 

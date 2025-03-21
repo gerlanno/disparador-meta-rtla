@@ -14,6 +14,7 @@ from sqlalchemy import (
     String,
     Integer,
     CheckConstraint,
+    UniqueConstraint,
     TIMESTAMP,
     func,
     PrimaryKeyConstraint,
@@ -36,18 +37,45 @@ class Cartorio(Base):
 
 
 class Titulo(Base):
+
+    """
+    #### Criar o trigger caso precise recriar o banco. ####
+    CREATE OR REPLACE FUNCTION set_mesano_insert()
+        RETURNS TRIGGER AS $$
+        BEGIN
+            NEW.mesano_insert := TO_CHAR(NEW.datainsert, 'MMYYYY');
+            RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+
+        CREATE TRIGGER trg_set_mesano_insert
+        BEFORE INSERT ON titulos
+        FOR EACH ROW
+        EXECUTE FUNCTION set_mesano_insert();            
+    
+    """
+
     __tablename__ = "titulos"
+
     id = Column(Integer, primary_key=True)
     cartorio_id = Column(Integer, ForeignKey("cartorios.id"))
-    protocolo = Column(String(255), nullable=False, unique=True)
+    protocolo = Column(String(255), nullable=False)  # Removi unique=True
     credor = Column(String, nullable=False)
     valorprotestado = Column(Numeric(10, 2), nullable=False)
     numerotitulo = Column(String(255), nullable=False)
     dataprotesto = Column(String, nullable=False)
     mesano = Column(Integer, nullable=False)
-    CheckConstraint("mesano >= 202001 AND mesano <= 210001", name="check_mesano")
     valorboleto = Column(Numeric(10, 2), nullable=False)
     datainsert = Column(TIMESTAMP, server_default=func.now())
+
+    # Nova coluna para armazenar mês/ano da data de inserção
+    mesano_insert = Column(String(6), nullable=False, default=func.to_char(func.now(), 'MMYYYY'))
+
+    # Restrições
+    __table_args__ = (
+        CheckConstraint("mesano >= 202001 AND mesano <= 210001", name="check_mesano"),
+        UniqueConstraint("protocolo", "mesano_insert", name="uq_protocolo_mesano")
+    )
 
 
 class Devedor(Base):
@@ -70,9 +98,11 @@ class Contato(Base):
 
 class Zapenviado(Base):
     __tablename__ = "zapenviados"
+
     messageid = Column(String(100))
     titulo_id = Column(Integer, ForeignKey("titulos.id"), primary_key=True)
-    whatsapp = Column(String(15))
+    whatsapp = Column(String(15), primary_key=True)
+    mesano_insert = Column(String(6), nullable=False, primary_key=True)  # Novo campo na chave primária
     wa_id = Column(String(13))
     message_status = Column(String(50))
     accepted = Column(String(255))
@@ -80,6 +110,7 @@ class Zapenviado(Base):
     response = Column(Text)
     error = Column(String(255))
     datainsert = Column(TIMESTAMP, server_default=func.now())
+
 
 
 class Template(Base):
