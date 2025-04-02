@@ -68,6 +68,15 @@ def disparo(cartorio_id):
 
     return jsonify({"to_send": to_send if to_send else None})
 
+@app.route("/to-send/<id>")
+def to_send(cartorio_id):
+
+    to_send = titulos_para_enviar(cartorio=cartorio_id)
+    
+    return jsonify({"Cartório": cartorio_id,
+                    "a_disparar": to_send})
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5001)
