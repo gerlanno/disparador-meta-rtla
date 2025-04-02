@@ -215,6 +215,7 @@ def get_titulos(**kwargs):
         numero_titulo = titulo.numerotitulo
         nome_credor = titulo.credor
         valor_titulo = str(titulo.valorprotestado)
+        mesano_insert = titulo.mesano_insert
         url_cartorio = (
             session.query(Cartorio.website)
             .filter(Cartorio.id == titulo.cartorio_id)
@@ -223,7 +224,7 @@ def get_titulos(**kwargs):
         nome_cartorio = (
             session.query(Cartorio.nome).filter(Cartorio.id == titulo.cartorio_id).one()
         )
-
+        
         devedores = (
             session.query(Devedor)
             .filter(
@@ -262,6 +263,7 @@ def get_titulos(**kwargs):
                     nome_credor,
                     valor_titulo,
                     numero_titulo,
+                    mesano_insert,
                     url_cartorio[0],
                     nome_cartorio[0],
                     telefone if telefone else None,
@@ -272,13 +274,16 @@ def get_titulos(**kwargs):
     return lista_titulos if len(lista_titulos) > 0 else False
 
 
-def titulos_para_enviar():
+def titulos_para_enviar(**kwargs):
     # Retornar quantos titulos para disparar mensagens.
-    titulos = get_titulos()
+    if kwargs:
+        titulos = get_titulos(cartorio=int(kwargs.get('cartorio')))
+    else:    
+        titulos = get_titulos()
     if titulos:
-        return print(f"Titulos a enviar: {len(titulos)}")
+        return len(titulos)
     else:
-        return print("Nenhum titulo para enviar")
+        return False
 
 
 def cadastrar_template(**kwargs):
@@ -370,11 +375,11 @@ def get_business_account(**kwargs):
 
     session = create_session()
     if kwargs:
-        name = kwargs.get("name")
+        account_name = kwargs.get("name")
 
         business_acc = (
             session.query(Wb_account)
-            .filter(Wb_account.name == kwargs.get("name"))
+            .filter(Wb_account.name == account_name)
             .all()
         )
     else:
@@ -401,6 +406,7 @@ def historico_disparos(**kwargs):
     """
     messageid = kwargs.get("messageid")
     titulo_id = kwargs.get("titulo_id")
+    mesano_insert = kwargs.get("mesano_insert")
     whatsapp = kwargs.get("whatsapp")
     wa_id = kwargs.get("wa_id")
     message_status = kwargs.get("message_status")
@@ -422,6 +428,7 @@ def historico_disparos(**kwargs):
             rejected=rejected,
             response=response,
             error=error,
+            mesano_insert=mesano_insert
         )
 
         session.add(disparo)
@@ -496,7 +503,7 @@ def update_zapenviado():
 
     import csv
 
-    with open("zapenviados_sent.csv", mode="r", encoding="utf-8") as arquivo_csv:
+    with open("att_zapenviado.csv", mode="r", encoding="utf-8") as arquivo_csv:
         try:
             count = 1
             reader = csv.DictReader(arquivo_csv)
@@ -512,6 +519,7 @@ def update_zapenviado():
                 rejected = row.get("rejected")
                 response = row.get("response")
                 error = row.get("error")
+                mesano_insert = row.get("mesano_insert")
 
                 historico_disparos(
                     messageid=messageid,
@@ -520,6 +528,7 @@ def update_zapenviado():
                     wa_id=wa_id,
                     message_status=message_status,
                     response=response,
+                    mesano_insert=mesano_insert
                 )
 
         except Exception as e:
