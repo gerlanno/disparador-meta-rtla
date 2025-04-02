@@ -187,9 +187,9 @@ def show_menu():
             case "titulos": 
                 cartorio = input("Código Cartório? (em branco para todos)" )
                 if cartorio:
-                    titulos_para_enviar(cartorio=(cartorio)) 
+                    print(titulos_para_enviar(cartorio=(cartorio)))
                 else:              
-                    titulos_para_enviar()
+                    print(titulos_para_enviar())
                 pause()                               
             ############################
 
