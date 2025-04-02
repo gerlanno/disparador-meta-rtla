@@ -110,8 +110,8 @@ def extract_cancelamento(file):
 
 
 # Itera pelos arquivos da pasta data, procurando pela lista de cancelamento.
-def extrair_dados():
-    DATA_FOLDER = r'src/data'
+def extrair_dados(folder='src/data'):
+    DATA_FOLDER = r'{0}'.format(folder)
     sucess = 0
     for root, dirs, files in os.walk(DATA_FOLDER):
 

@@ -1,5 +1,7 @@
 import sys
 import os
+import requests
+import json
 from xml.dom import NotFoundErr
 from tqdm import tqdm
 from itertools import islice
@@ -14,8 +16,6 @@ from controller.controller import (
 )
 from config.configs import find_token
 from utils.tools import convert_to_brl
-import requests
-import json
 from utils.logger import Logger
 from time import sleep
 
@@ -56,7 +56,6 @@ def iswhatsapp(phone_numbers):
         return True
     else:
         return False
-
 
 
 def parse_error(response_text):
@@ -146,6 +145,7 @@ def disparar(business_acc_name, qtd_disparos):
                 nome_credor,
                 valor_titulo,
                 numero_titulo,
+                mesano_insert,
                 url_cartorio,
                 nome_cartorio,
                 telefones,
@@ -189,13 +189,15 @@ def disparar(business_acc_name, qtd_disparos):
                         telefone,
                         template_name,
                         titulo_id,
+                        mesano_insert,
                         paramentros_template,
                         business_id,
                     )
 
     else:
-        print("Nada a processar.")
+        return {"Status": "Nada a processar"}
 
+    return {"Status": True}
 
 def send_messages(
     phone_id,
@@ -203,6 +205,7 @@ def send_messages(
     telefone,
     template,
     titulo_id,
+    mesano_insert,
     paramentros_template,
     business_id,
 ):
@@ -245,6 +248,7 @@ def send_messages(
         historico_disparos(
             messageid=messageid,
             titulo_id=int(titulo_id),
+            mesano_insert=mesano_insert,
             whatsapp=telefone,
             wa_id=wa_id,
             message_status=message_status,

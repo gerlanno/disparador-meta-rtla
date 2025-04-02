@@ -184,8 +184,12 @@ def show_menu():
             case "iswhats":                
                 att_iswhatsapp()
                 pause()
-            case "titulos":                
-                titulos_para_enviar()
+            case "titulos": 
+                cartorio = input("Código Cartório? (em branco para todos)" )
+                if cartorio:
+                    titulos_para_enviar(cartorio=(cartorio)) 
+                else:              
+                    titulos_para_enviar()
                 pause()                               
             ############################
 
@@ -203,7 +207,7 @@ if __name__ == "__main__":
             try:
                 qtd_disparos = int(sys.argv[2].upper())
             except Exception as e:
-                print(e)
+                logger.error(e)
             business_accs = get_business_account()
             for acc in business_accs:
 
