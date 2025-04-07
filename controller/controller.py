@@ -1,3 +1,4 @@
+from statistics import quantiles
 import sys
 import os
 from urllib import response
@@ -181,20 +182,28 @@ def get_titulos(**kwargs):
     foi feita a comunicação.
     """
 
+
     lista_titulos = []
     session = create_session()
 
     # Consultar os ids que não estão na tabela zapenviados.
+    from datetime import datetime
+
+
+
     zapenviado_filter = (
         session.query(Zapenviado.titulo_id)
         .filter(Zapenviado.titulo_id == Titulo.id, Zapenviado.mesano_insert == Titulo.mesano_insert)
         .exists()
     )
 
+
+
     if kwargs:
         cartorio = kwargs.get("cartorio")
 
         # Filtragem de titulos por cartório
+
         titulos_para_enviar = (
             session.query(Titulo)
             .filter(~zapenviado_filter)
@@ -205,7 +214,9 @@ def get_titulos(**kwargs):
     else:
 
         # Lista de titulos sem filtro de cartório, somente os que não foram enviados ainda.
+       
         titulos_para_enviar = session.query(Titulo).filter(~zapenviado_filter).all()
+     
 
     for titulo in titulos_para_enviar:
 
@@ -241,7 +252,7 @@ def get_titulos(**kwargs):
             contatos = (
                 session.query(Contato.telefone)
                 .filter(Contato.documento == devedor.documento)
-                .filter(Contato.iswhatsapp == True)
+                .filter(Contato.validado == True)
                 .all()
             )
 
@@ -255,6 +266,7 @@ def get_titulos(**kwargs):
 
                 else:
                     pass
+
         if telefone:
             lista_titulos.append(
                 (
@@ -269,6 +281,8 @@ def get_titulos(**kwargs):
                     telefone if telefone else None,
                 )
             )
+
+
 
     session.close()
     return lista_titulos if len(lista_titulos) > 0 else False
@@ -551,7 +565,7 @@ def __att_iswhatsapp():
 
                     session.query(Contato).filter(
                         Contato.telefone == contato.telefone
-                    ).update({Contato.iswhatsapp: True})
+                    ).update({Contato.validado: True})
                     session.commit()
 
                 except Exception as e:
@@ -560,14 +574,14 @@ def __att_iswhatsapp():
                 try:
                     session.query(Contato).filter(
                         Contato.telefone == contato.telefone
-                    ).update({Contato.iswhatsapp: False})
+                    ).update({Contato.validado: False})
                     session.commit()
 
                 except Exception as e:
                     logger.info(e)
 
-    is_whatsapp = session.query(Contato).filter(Contato.iswhatsapp == True)
-    not_whatsapp = session.query(Contato).filter(Contato.iswhatsapp == False)
+    is_whatsapp = session.query(Contato).filter(Contato.validado == True)
+    not_whatsapp = session.query(Contato).filter(Contato.validado == False)
 
     print(
         f"{len(is_whatsapp)} - Números com whatsapp\n {len(not_whatsapp)} - Números sem whatsapp"
@@ -594,7 +608,7 @@ def att_iswhatsapp():
             try:
                 session.query(Contato).filter(
                     Contato.telefone == response.get("number")
-                ).update({Contato.iswhatsapp: response.get("exists")})
+                ).update({Contato.validado: response.get("exists")})
                 session.commit()
             except Exception as e:
                 logger.error(e, response)

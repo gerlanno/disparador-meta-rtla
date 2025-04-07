@@ -91,7 +91,8 @@ class Contato(Base):
     documento = Column(String(14), nullable=False, primary_key=True)
     telefone = Column(String(), primary_key=True)
     email = Column(String(100))
-    iswhatsapp = Column(Boolean, default=True)  # Nova coluna adicionada com valor padrão
+    validado = Column(Boolean, default=True)  # Nova coluna adicionada com valor padrão
+    detalhes = Column(String(250), nullable=True)
     PrimaryKeyConstraint("documento", "telefone")
 
 

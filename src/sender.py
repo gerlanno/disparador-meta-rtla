@@ -22,7 +22,9 @@ from time import sleep
 
 logger = Logger().get_logger()
 
-#
+limite_disparos = 1000
+disparos_feitos = 0
+
 template_name = ""
 
 
@@ -139,6 +141,9 @@ def disparar(business_acc_name, qtd_disparos):
             unit="Disparos ",
             colour="GREEN",
         ):
+            if disparos_feitos == limite_disparos:
+                break
+
             (
                 nome_devedor,
                 titulo_id,
@@ -193,6 +198,7 @@ def disparar(business_acc_name, qtd_disparos):
                         paramentros_template,
                         business_id,
                     )
+
 
     else:
         return {"Status": "Nada a processar"}
@@ -254,7 +260,7 @@ def send_messages(
             message_status=message_status,
             response=str(response_text),
         )
-
+        disparos_feitos = disparos_feitos + 1
     else:
 
         error_code, error_message = parse_error(response_text)
