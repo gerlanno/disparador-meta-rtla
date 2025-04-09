@@ -1,3 +1,4 @@
+from doctest import debug
 from sqlite3 import connect
 import sys
 import os

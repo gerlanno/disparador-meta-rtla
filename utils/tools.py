@@ -68,7 +68,24 @@ def atualizar_whatsapp():
                
             return print("Nada a processar.")
 
-             
+def not_whatsapp():
+    lista_contatos = []
+    for root, dirs, files in os.walk(DATA_FOLDER):
+            for file in files:
+                if "NAO_ZAP" in file and file.endswith(".txt"):
+                    file_path = os.path.join(root, file)
+
+                    with open(file_path, mode='r') as ler_txt:
+                        linhas = ler_txt.readlines()
+                        lista_contatos = [linha.strip() for linha in linhas]                    
+
+
+                 
+                    new_filename = f"ZAPERRADO-IMPORTADO[{AGORA}].txt"
+                    os.rename(file_path, os.path.join(root, new_filename))
+                    return lista_contatos if lista_contatos else None
+               
+            return print("Nada a processar.")                
                          
         
                 
