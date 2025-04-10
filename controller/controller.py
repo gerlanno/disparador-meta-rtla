@@ -1,6 +1,5 @@
 import sys
 import os
-from tkinter import N
 from urllib import response
 from tqdm import tqdm
 from requests import delete, session
@@ -602,8 +601,3 @@ def att_iswhatsapp():
             logger.error(f"Erro atualizando Telefone - {e}")
 
 
-#Total rows: 1000 of 11332
-#Total rows: 1000 of 11809
-
-
-print(11809 - 11332)
