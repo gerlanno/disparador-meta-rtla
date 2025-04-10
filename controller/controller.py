@@ -1,5 +1,6 @@
 import sys
 import os
+from tkinter import N
 from urllib import response
 from tqdm import tqdm
 from requests import delete, session
@@ -590,10 +591,19 @@ def att_iswhatsapp():
     contatos = session.query(Contato).all()
 
     for numero in tqdm(lista_numeros, desc=f"Atualizando"):
+        oito_ultimos_num = numero[-8:]
         try:
-            session.query(Contato).filter(Contato.telefone.like(f"%{numero}")).update(
+            
+            session.query(Contato).filter(Contato.telefone.like(f"%{oito_ultimos_num}")).update(
                 {Contato.validado: False}
             )
             session.commit()
         except Exception as e:
             logger.error(f"Erro atualizando Telefone - {e}")
+
+
+#Total rows: 1000 of 11332
+#Total rows: 1000 of 11809
+
+
+print(11809 - 11332)
