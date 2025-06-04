@@ -22,6 +22,7 @@ from model.Models import (
 logger = Logger().get_logger()
 
 
+
 def processa_dados_titulo(dados):
     """
     Função que recebe os dados extraídos dos arquivos
@@ -182,9 +183,8 @@ def get_titulos(**kwargs):
     lista_titulos = []
     session = create_session()
 
-    # Consultar os ids que não estão na tabela zapenviados.
-    from datetime import datetime
 
+    # Consultar os ids que não estão na tabela zapenviados.
     zapenviado_filter = (
         session.query(Zapenviado.titulo_id)
         .filter(
@@ -196,9 +196,7 @@ def get_titulos(**kwargs):
 
     if kwargs:
         cartorio = kwargs.get("cartorio")
-
         # Filtragem de titulos por cartório
-
         titulos_para_enviar = (
             session.query(Titulo)
             .filter(~zapenviado_filter)
@@ -207,27 +205,20 @@ def get_titulos(**kwargs):
         )
 
     else:
-
         # Lista de titulos sem filtro de cartório, somente os que não foram enviados ainda.
-
         titulos_para_enviar = session.query(Titulo).filter(~zapenviado_filter).all()
 
     for titulo in titulos_para_enviar:
-
-        # EM CASO NEGATIVO, COLETAR AS INFORMAÇÕES PARA REALIZAR O DISPARO
-
+        
         titulo_id = titulo.id
         numero_titulo = titulo.numerotitulo
         nome_credor = titulo.credor
         valor_titulo = str(titulo.valorprotestado)
         mesano_insert = titulo.mesano_insert
-        url_cartorio = (
-            session.query(Cartorio.website)
+        url_cartorio, nome_cartorio = (
+            session.query(Cartorio.website, Cartorio.nome)
             .filter(Cartorio.id == titulo.cartorio_id)
             .one()
-        )
-        nome_cartorio = (
-            session.query(Cartorio.nome).filter(Cartorio.id == titulo.cartorio_id).one()
         )
 
         devedores = (
