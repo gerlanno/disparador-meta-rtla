@@ -25,39 +25,6 @@ logger = Logger().get_logger()
 
 template_name = ""
 
-
-def iswhatsapp(phone_numbers):
-
-    url = "https://evo2.getbot.site/chat/whatsappNumbers/BotTeste"
-
-    if not isinstance(phone_numbers, list):
-        list_or_number = [phone_numbers]
-    else:
-        list_or_number = phone_numbers
-
-    payload = json.dumps(
-        {
-            "numbers": list_or_number
-        }
-    )
-    headers = {
-        "Content-Type": "application/json",
-        "apikey": "A86779CDDD7B-46BF-B566-2016DB210E9D",
-    }
-
-    response = requests.request("POST", url, headers=headers, data=payload)
-    response_text = json.loads(response.text)
-    
-    #exists = response_text[0].get("exists")
-
-    return response_text    
-
-    if exists == True:
-        return True
-    else:
-        return False
-
-
 def parse_error(response_text):
     error = response_text.get("error", {})
     if error:
@@ -179,20 +146,19 @@ def disparar(business_acc_name, qtd_disparos):
                 },
             ]
 
-            if telefones != None:
-                for telefone in telefones:
-                    
-                    # Enviar a mensagem para o número de cadastro do titulo.
-                    send_messages(
-                        phone_id,
-                        api_token,
-                        telefone,
-                        template_name,
-                        titulo_id,
-                        mesano_insert,
-                        paramentros_template,
-                        business_id,
-                    )
+            
+            for telefone in telefones:                
+                # Enviar a mensagem para o número de cadastro do titulo.
+                send_messages(
+                    phone_id,
+                    api_token,
+                    telefone,
+                    template_name,
+                    titulo_id,
+                    mesano_insert,
+                    paramentros_template,
+                    business_id,
+                )
 
     else:
         return {"Status": "Nada a processar"}
