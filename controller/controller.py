@@ -200,13 +200,13 @@ def get_titulos(**kwargs):
         titulos_para_enviar = (
             session.query(Titulo)
             .filter(~zapenviado_filter)
-            .filter(Titulo.cartorio_id == cartorio)
+            .filter(Titulo.cartorio_id == cartorio).order_by(Titulo.valorprotestado)
             .all()
         )
 
     else:
         # Lista de titulos sem filtro de cartório, somente os que não foram enviados ainda.
-        titulos_para_enviar = session.query(Titulo).filter(~zapenviado_filter).all()
+        titulos_para_enviar = session.query(Titulo).filter(~zapenviado_filter).order_by(Titulo.valorprotestado).all()
 
     for titulo in titulos_para_enviar:
         
@@ -229,8 +229,9 @@ def get_titulos(**kwargs):
             )
             .all()
         )
+
         telefone = []
-        for devedor in devedores:
+        for devedor in devedores:            
 
             documento = devedor.documento
             nome_devedor = devedor.nome
@@ -242,13 +243,10 @@ def get_titulos(**kwargs):
             )
 
             for contato in contatos:
-
-                # VERIFICAR SE EXISTE CONTATO CADASTRADO
+                # Limitar a 2 números por titulo.
                 if len(telefone) < 2:
-
                     if len(contato.telefone) > 0:
                         telefone.append(contato.telefone)
-
                 else:
                     pass
 
@@ -261,8 +259,8 @@ def get_titulos(**kwargs):
                     valor_titulo,
                     numero_titulo,
                     mesano_insert,
-                    url_cartorio[0],
-                    nome_cartorio[0],
+                    url_cartorio,
+                    nome_cartorio,
                     telefone if telefone else None,
                 )
             )
@@ -281,7 +279,6 @@ def titulos_para_enviar(**kwargs):
         disparos = 0
         print(len(titulos))
         for titulo in titulos:
-
             disparos += len(titulo[8])
         return disparos
     else:
@@ -533,45 +530,6 @@ def update_zapenviado():
 
         except Exception as e:
             logger.info("Erro", e)
-
-
-def __att_iswhatsapp():
-
-    # Obsoleta por enquanto.
-
-    from src.sender import iswhatsapp
-
-    session = create_session()
-    contatos = session.query(Contato).all()
-
-    for contato in tqdm(contatos, desc="Verificando números", colour="GREEN"):
-        if contato.telefone:
-            if iswhatsapp(contato.telefone):
-                try:
-
-                    session.query(Contato).filter(
-                        Contato.telefone == contato.telefone
-                    ).update({Contato.validado: True})
-                    session.commit()
-
-                except Exception as e:
-                    logger.info(e)
-            else:
-                try:
-                    session.query(Contato).filter(
-                        Contato.telefone == contato.telefone
-                    ).update({Contato.validado: False})
-                    session.commit()
-
-                except Exception as e:
-                    logger.info(e)
-
-    is_whatsapp = session.query(Contato).filter(Contato.validado == True)
-    not_whatsapp = session.query(Contato).filter(Contato.validado == False)
-
-    print(
-        f"{len(is_whatsapp)} - Números com whatsapp\n {len(not_whatsapp)} - Números sem whatsapp"
-    )
 
 
 def att_iswhatsapp():
