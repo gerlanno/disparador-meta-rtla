@@ -129,11 +129,11 @@ def atualizar_contato():
             dados_contato, "Atualizando..", unit="Contato", colour="BLUE"
         ):
             documento, telefone = dados
-
-            if telefone[2] in ["8", "9"]:
-                whatsapp = f"55{telefone}"
-
-                try:
+            
+            try:
+                if telefone[2] in ["8", "9"]:
+                    whatsapp = f"55{telefone}"
+                    
                     query = (
                         session.query(Contato)
                         .filter(Contato.documento == documento)
@@ -153,7 +153,7 @@ def atualizar_contato():
                         session.add(contato)
                         session.commit()
                     sucessos = sucessos + 1
-                except Exception as e:
+            except Exception as e:
                     erros = erros + 1
                     session.rollback()
                     logger.error(str(e))
