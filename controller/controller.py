@@ -22,7 +22,6 @@ from model.Models import (
 logger = Logger().get_logger()
 
 
-
 def processa_dados_titulo(dados):
     """
     Função que recebe os dados extraídos dos arquivos
@@ -129,11 +128,11 @@ def atualizar_contato():
             dados_contato, "Atualizando..", unit="Contato", colour="BLUE"
         ):
             documento, telefone = dados
-            
+
             try:
                 if telefone[2] in ["8", "9"]:
                     whatsapp = f"55{telefone}"
-                    
+
                     query = (
                         session.query(Contato)
                         .filter(Contato.documento == documento)
@@ -154,9 +153,9 @@ def atualizar_contato():
                         session.commit()
                     sucessos = sucessos + 1
             except Exception as e:
-                    erros = erros + 1
-                    session.rollback()
-                    logger.error(str(e))
+                erros = erros + 1
+                session.rollback()
+                logger.error(str(e))
 
         return print(f"Atualização concluída. \nErros: {erros}\nSucesso: {sucessos}")
 
@@ -183,7 +182,6 @@ def get_titulos(**kwargs):
     lista_titulos = []
     session = create_session()
 
-
     # Consultar os ids que não estão na tabela zapenviados.
     zapenviado_filter = (
         session.query(Zapenviado.titulo_id)
@@ -200,16 +198,23 @@ def get_titulos(**kwargs):
         titulos_para_enviar = (
             session.query(Titulo)
             .filter(~zapenviado_filter)
-            .filter(Titulo.cartorio_id == cartorio).order_by(Titulo.valorprotestado)
+            .filter(Titulo.mesano_insert == "062025")
+            .filter(Titulo.cartorio_id == cartorio)
+            .order_by(Titulo.valorprotestado)
             .all()
         )
 
     else:
         # Lista de titulos sem filtro de cartório, somente os que não foram enviados ainda.
-        titulos_para_enviar = session.query(Titulo).filter(~zapenviado_filter).order_by(Titulo.valorprotestado).all()
+        titulos_para_enviar = (
+            session.query(Titulo)
+            .filter(~zapenviado_filter)
+            .order_by(Titulo.valorprotestado)
+            .all()
+        )
 
     for titulo in titulos_para_enviar:
-        
+
         titulo_id = titulo.id
         numero_titulo = titulo.numerotitulo
         nome_credor = titulo.credor
@@ -231,7 +236,7 @@ def get_titulos(**kwargs):
         )
 
         telefone = []
-        for devedor in devedores:            
+        for devedor in devedores:
 
             documento = devedor.documento
             nome_devedor = devedor.nome
@@ -534,6 +539,7 @@ def update_zapenviado():
 
 def att_iswhatsapp():
     from utils.tools import not_whatsapp
+
     lista_numeros = not_whatsapp()
     session = create_session()
     contatos = session.query(Contato).all()
@@ -541,12 +547,10 @@ def att_iswhatsapp():
     for numero in tqdm(lista_numeros, desc=f"Atualizando"):
         oito_ultimos_num = numero[-8:]
         try:
-            
-            session.query(Contato).filter(Contato.telefone.like(f"%{oito_ultimos_num}")).update(
-                {Contato.validado: False}
-            )
+
+            session.query(Contato).filter(
+                Contato.telefone.like(f"%{oito_ultimos_num}")
+            ).update({Contato.validado: False})
             session.commit()
         except Exception as e:
             logger.error(f"Erro atualizando Telefone - {e}")
-
-
