@@ -93,6 +93,9 @@ def extract_cancelamento(file):
         """
         lista_geral.append((lista_titulos[i], lista_devedores, lista_contatos))
 
+
+
+    
     for index, titulo in enumerate(
         tqdm(lista_geral, desc="Processando dados", unit="Registro", colour="BLUE")
     ):
@@ -107,7 +110,7 @@ def extract_cancelamento(file):
             print(
                 f"\nQuantidade total de titulos processados: {len(lista_geral)}\n Quantidade total de titulos registrados: {num_final - num_inicial}"
             )
-
+    
 
 # Itera pelos arquivos da pasta data, procurando pela lista de cancelamento.
 def extrair_dados(folder='src/data'):

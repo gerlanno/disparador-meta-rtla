@@ -29,6 +29,7 @@ def convert_to_brl(value):
 
     return value_brl
 
+
 def zapeviados_to_csv():
     """
     Salvar registros da tabela zapenviados para csv
@@ -49,6 +50,7 @@ def zapeviados_to_csv():
             print("Erro, ver aquivo de logs para mais detalhes.")
             logger.info("Erro", e)
 
+
 def atualizar_whatsapp():
 
     lista_contatos = []
@@ -68,6 +70,7 @@ def atualizar_whatsapp():
                
             return print("Nada a processar.")
 
+
 def not_whatsapp():
     lista_contatos = []
     for root, dirs, files in os.walk(DATA_FOLDER):
@@ -86,8 +89,8 @@ def not_whatsapp():
                     return lista_contatos if lista_contatos else None
                
             return print("Nada a processar.")                
-                         
-        
+
+
                 
    
 
