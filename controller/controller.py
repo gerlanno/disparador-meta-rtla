@@ -218,7 +218,8 @@ def get_titulos(**kwargs):
                 Titulo.mesano_insert == mesano_filter
             )
         titulos_para_enviar = (
-            titulos_para_enviar.query(Titulo).order_by(Titulo.valorprotestado).all()
+            titulos_para_enviar.query(Titulo)
+            .order_by(Titulo.valorprotestado).all()
         )
 
     for titulo in titulos_para_enviar:
