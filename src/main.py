@@ -186,6 +186,7 @@ def show_menu():
                 pause()
             case "titulos": 
                 cartorio = input("Código Cartório? (em branco para todos)" )
+                
                 if cartorio:
                     print(titulos_para_enviar(cartorio=(cartorio)))
                 else:              

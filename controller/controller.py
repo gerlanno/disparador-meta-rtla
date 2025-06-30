@@ -195,22 +195,30 @@ def get_titulos(**kwargs):
     if kwargs:
         cartorio = kwargs.get("cartorio")
         # Filtragem de titulos por cartório
+        mesano_filter = input("Filtrar por mesano_insert? ").strip()
+        titulos_para_enviar = session.query(Titulo).filter(~zapenviado_filter)
+
+        if mesano_filter:
+            titulos_para_enviar = titulos_para_enviar.filter(
+                Titulo.mesano_insert == mesano_filter
+            )
+
         titulos_para_enviar = (
-            session.query(Titulo)
-            .filter(~zapenviado_filter)
-            .filter(Titulo.mesano_insert == "062025")
-            .filter(Titulo.cartorio_id == cartorio)
+            titulos_para_enviar.filter(Titulo.cartorio_id == cartorio)
             .order_by(Titulo.valorprotestado)
             .all()
         )
 
     else:
         # Lista de titulos sem filtro de cartório, somente os que não foram enviados ainda.
+        mesano_filter = input("Filtrar por mesano_insert? ").strip()
+        titulos_para_enviar = session.query(Titulo).filter(~zapenviado_filter)
+        if mesano_filter:
+            titulos_para_enviar = titulos_para_enviar.filter(
+                Titulo.mesano_insert == mesano_filter
+            )
         titulos_para_enviar = (
-            session.query(Titulo)
-            .filter(~zapenviado_filter)
-            .order_by(Titulo.valorprotestado)
-            .all()
+            titulos_para_enviar.query(Titulo).order_by(Titulo.valorprotestado).all()
         )
 
     for titulo in titulos_para_enviar:
