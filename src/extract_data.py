@@ -2,17 +2,22 @@ import sys
 import os
 
 sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".."))
+    0, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__))))
 )
+from venv import logger
 import xml.etree.ElementTree as et
 from tqdm import tqdm
 from controller.controller import processa_dados_titulo, titulos_registrados
 from datetime import datetime, tzinfo
-from config.configs import FILES_DIR
-
-# Diretório onde devem estar os arquivos xml
-# que possuem os dados a ser extraídos.
-DATA_FOLDER = FILES_DIR
+from config.configs import (
+    FILES_DIR,
+    PROCESSED_DIR,
+    UPLOADS_DIR,
+    BASE_DIR,
+    FILES_DIR,
+    LOG_DIR,
+)
+from shutil import move
 
 # Momento atual, com data e hora completa,
 # será usado para renomear o arquivo processado.
@@ -93,9 +98,6 @@ def extract_cancelamento(file):
         """
         lista_geral.append((lista_titulos[i], lista_devedores, lista_contatos))
 
-
-
-    
     for index, titulo in enumerate(
         tqdm(lista_geral, desc="Processando dados", unit="Registro", colour="BLUE")
     ):
@@ -110,26 +112,45 @@ def extract_cancelamento(file):
             print(
                 f"\nQuantidade total de titulos processados: {len(lista_geral)}\n Quantidade total de titulos registrados: {num_final - num_inicial}"
             )
-    
+
 
 # Itera pelos arquivos da pasta data, procurando pela lista de cancelamento.
-def extrair_dados(folder='src/data'):
-    DATA_FOLDER = r'{0}'.format(folder)
+def extrair_dados(folder=FILES_DIR):
+    # DATA_FOLDER = r'{0}'.format(folder) - OBSOLETO
     sucess = 0
-    for root, dirs, files in os.walk(DATA_FOLDER):
 
-        for file in files:
+    for root, dirs, files in os.walk(FILES_DIR):
+        if not "processed" in root:
+            for file in files:
+                
+                if "Cancelamento" in file and file.endswith(".xml"):
 
-            if "Cancelamento" in file and file.endswith(".xml"):
-                file_path = os.path.join(root, file)
+                    file_path = os.path.join(root, file)
 
-                extract_cancelamento(file_path)
-                new_filename = f"Processado{AGORA}_{sucess}.xml"
-                os.rename(file_path, os.path.join(root, new_filename))
-                sucess = sucess + 1
+                    if os.path.isfile(os.path.join(PROCESSED_DIR, file)):
+
+                        print(f"O arquivo [{file}] já foi importado anteriormente!")
+                        logger.error(f"Arquivo já importado anteriormente - [{file}]")
+                        
+                    else:
+                        extract_cancelamento(file_path)
+                        # new_filename = f"Processado{AGORA}_{sucess}.xml"
+
+                        path_processed = os.path.join(PROCESSED_DIR, file)
+
+                        move(file_path, path_processed)
+
+                        # os.rename(file_path, os.path.join(root, new_filename))
+                        sucess = sucess + 1
+                else:
+                    return "Nada para importar!"
 
     if not sucess > 0:
         return {"sucess": False, "message": "Nenhum arquivo processado."}
     else:
-        return {"sucess": True, "message": f"Tarefa concluída, arquivos processados: {sucess}."}
+        return {
+            "sucess": True,
+            "message": f"Tarefa concluída, arquivos processados: {sucess}.",
+        }
+
 

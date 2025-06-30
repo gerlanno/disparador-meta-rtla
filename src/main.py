@@ -2,14 +2,14 @@ from re import X
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__))))
 from colorama import Fore, Style, init
-from src.extract_data import extrair_dados
+from extract_data import extrair_dados
 from database.db import create_database_if_not_exists, check_tables
 from model.Models import create_tables
 from sender import disparar
 from controller.controller import get_business_account, cadastrar_business_account, atualizar_contato, del_zapfailed, update_zapenviado, att_iswhatsapp, titulos_para_enviar
-from src.templates import update_templates_list
+from templates import update_templates_list
 from utils.logger import Logger
 from utils.tools import zapeviados_to_csv
 
@@ -115,7 +115,7 @@ def show_menu():
 
                 match iniciar:
                     case "s":
-                        extrair_dados()
+                        print(extrair_dados())
                         pause()
                     case "n":
                         continue

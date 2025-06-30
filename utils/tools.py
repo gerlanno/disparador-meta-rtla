@@ -5,7 +5,7 @@ import csv
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from controller.controller import get_zapenviados
 from utils.logger import Logger
-from src.data.extract_data import AGORA
+from src.extract_data import AGORA
 from tqdm import tqdm
 
 

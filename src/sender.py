@@ -6,7 +6,7 @@ from xml.dom import NotFoundErr
 from tqdm import tqdm
 from itertools import islice
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__))))
 from controller.controller import (
     get_titulos,
     get_business_account,

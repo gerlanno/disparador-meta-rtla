@@ -18,12 +18,13 @@ db_config = {
 }
 
 # Diretório com os arquivos para extração de dados.
-FILES_DIR = os.getenv("FILES_DIR") #PASTA PRA INTEGRAÇÃO COM O APP FLASK - NAO USADO
+
+
+UPLOADS_DIR = os.getenv("FILES_DIR") #PASTA PRA INTEGRAÇÃO COM O APP FLASK - NAO USADO
 
 BASE_DIR = os.getcwd()
-DATA_DIR = os.path.join(BASE_DIR, 'data')
-PROCESSED_DIR = os.path.join(DATA_DIR, 'processed')
-ERROR_DIR = os.path.join(BASE_DIR, 'error')
+FILES_DIR = os.path.join(BASE_DIR, 'data')
+PROCESSED_DIR = os.path.join(FILES_DIR, 'processed')
 LOG_DIR = os.path.join(BASE_DIR, 'logs')
 
 
