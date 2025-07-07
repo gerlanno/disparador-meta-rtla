@@ -2,17 +2,27 @@ from email import message_from_file
 import sys
 import os
 import csv
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__))))
+)
 from controller.controller import get_zapenviados
 from utils.logger import Logger
 from src.extract_data import AGORA
 from tqdm import tqdm
 
-
+from config.configs import (
+    FILES_DIR,
+    PROCESSED_DIR,
+    UPLOADS_DIR,
+    BASE_DIR,
+    FILES_DIR,
+    LOG_DIR,
+)
+from shutil import move
 
 logger = Logger().get_logger()
 
-DATA_FOLDER = r"src/data"
+DATA_FOLDER = FILES_DIR
 
 def convert_to_brl(value):
 
@@ -69,6 +79,7 @@ def atualizar_whatsapp():
                     return lista_contatos if lista_contatos else None
                
             return print("Nada a processar.")
+
 
 
 def not_whatsapp():

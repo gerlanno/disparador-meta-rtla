@@ -3,8 +3,9 @@ import os
 from urllib import response
 from tqdm import tqdm
 from requests import delete, session
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__))))
+)
 from config.configs import dados_contas
 from database.db import create_session
 from sqlalchemy import text, update, select, delete, func
@@ -127,6 +128,7 @@ def atualizar_contato():
         for dados in tqdm(
             dados_contato, "Atualizando..", unit="Contato", colour="BLUE"
         ):
+            
             documento, telefone = dados
 
             try:
@@ -155,7 +157,7 @@ def atualizar_contato():
             except Exception as e:
                 erros = erros + 1
                 session.rollback()
-                logger.error(str(e))
+                logger.error(str(e.args))
 
         return print(f"Atualização concluída. \nErros: {erros}\nSucesso: {sucessos}")
 
