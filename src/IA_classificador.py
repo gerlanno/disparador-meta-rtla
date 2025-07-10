@@ -53,7 +53,7 @@ def checar_resposta(prompt, telefone, mensagem):
     return completion.choices[0].message.content
 
 
-def classificar_mensagens():
+def classificar_mensagens(data_inicial=hoje):
     try:
 
         query = f"""
@@ -62,7 +62,7 @@ def classificar_mensagens():
                     STRING_AGG(DISTINCT message_content, ' || ') AS mensagens_concatenadas
                     FROM 
                     message_history
-                    Where message_content <> '' and message_content <> 'Resposta automática' and created_at >= '{hoje}'
+                    Where message_content <> '' and message_content <> 'Resposta automática' and created_at >= '{data_inicial}'
                     GROUP BY 
                     sender_id;
                     """

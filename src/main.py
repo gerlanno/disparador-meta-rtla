@@ -183,7 +183,13 @@ def show_menu():
 
             case "7":
                 print(Style.RESET_ALL)
-                classificar_mensagens()
+                data = input("Deseja informar data inicial? (ex: 2025-05-05 ou em branco para todos)" )
+                
+                if data:
+                    classificar_mensagens(data)
+                else:              
+                    classificar_mensagens()
+               
                 pause() 
 
             ##### #Funções Ocultas######
