@@ -3,7 +3,6 @@ import os
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__))))
 )
-from flask import session
 from config.configs import  OPENAI_APIKEY
 from tqdm import tqdm
 import time
