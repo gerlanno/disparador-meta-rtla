@@ -143,7 +143,7 @@ def extrair_dados(folder=FILES_DIR):
                         # os.rename(file_path, os.path.join(root, new_filename))
                         sucess = sucess + 1
                 else:
-                    return "Nada para importar!"
+                    print ("Nada para importar!")
 
     if not sucess > 0:
         return {"sucess": False, "message": "Nenhum arquivo processado."}
