@@ -124,7 +124,7 @@ def extrair_dados(folder=FILES_DIR):
             for file in files:
                 print(files)
                 if "Cancelamento" in file and file.endswith(".xml"):
-
+                    print(file)
                     file_path = os.path.join(root, file)
 
                     if os.path.isfile(os.path.join(PROCESSED_DIR, file)):
