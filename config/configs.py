@@ -16,7 +16,7 @@ db_config = {
     "user": os.getenv("dbuser"),
     "password": os.getenv("dbpass"),
 }
-
+OPENAI_APIKEY = os.getenv("OPENAI_APIKEY")
 # Diretório com os arquivos para extração de dados.
 
 

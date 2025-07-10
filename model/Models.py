@@ -2,9 +2,9 @@ from enum import auto
 from sqlite3 import Date
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from sqlalchemy import (
-    
     Boolean,
     Numeric,
     Text,
@@ -19,7 +19,7 @@ from sqlalchemy import (
     func,
     PrimaryKeyConstraint,
     null,
-    inspect
+    inspect,
 )
 from utils.logger import Logger
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -29,6 +29,7 @@ logger = Logger().get_logger()
 
 Base = declarative_base()
 
+
 class Cartorio(Base):
     __tablename__ = "cartorios"
     id = Column(Integer, primary_key=True)
@@ -37,7 +38,6 @@ class Cartorio(Base):
 
 
 class Titulo(Base):
-
     """
     #### Criar o trigger caso precise recriar o banco. ####
     CREATE OR REPLACE FUNCTION set_mesano_insert()
@@ -51,8 +51,8 @@ class Titulo(Base):
         CREATE TRIGGER trg_set_mesano_insert
         BEFORE INSERT ON titulos
         FOR EACH ROW
-        EXECUTE FUNCTION set_mesano_insert();            
-    
+        EXECUTE FUNCTION set_mesano_insert();
+
     """
 
     __tablename__ = "titulos"
@@ -69,16 +69,19 @@ class Titulo(Base):
     datainsert = Column(TIMESTAMP, server_default=func.now())
 
     # Nova coluna para armazenar mês/ano da data de inserção
-    mesano_insert = Column(String(6), nullable=False, default=func.to_char(func.now(), 'MMYYYY'))
+    mesano_insert = Column(
+        String(6), nullable=False, default=func.to_char(func.now(), "MMYYYY")
+    )
 
     # Restrições
     __table_args__ = (
         CheckConstraint("mesano >= 202001 AND mesano <= 210001", name="check_mesano"),
-        UniqueConstraint("protocolo", "mesano_insert", name="uq_protocolo_mesano")
+        UniqueConstraint("protocolo", "mesano_insert", name="uq_protocolo_mesano"),
     )
 
 
 class Devedor(Base):
+    
     __tablename__ = "devedores"
     titulo_id = Column(Integer, ForeignKey("titulos.id"), primary_key=True)
     documento = Column(String, nullable=False, primary_key=True)
@@ -87,6 +90,7 @@ class Devedor(Base):
 
 
 class Contato(Base):
+
     __tablename__ = "contatos"
     documento = Column(String(14), nullable=False, primary_key=True)
     telefone = Column(String(), primary_key=True)
@@ -96,14 +100,15 @@ class Contato(Base):
     PrimaryKeyConstraint("documento", "telefone")
 
 
-
 class Zapenviado(Base):
-    __tablename__ = "zapenviados"
 
+    __tablename__ = "zapenviados"
     messageid = Column(String(100))
     titulo_id = Column(Integer, ForeignKey("titulos.id"), primary_key=True)
     whatsapp = Column(String(15), primary_key=True)
-    mesano_insert = Column(String(6), nullable=False, primary_key=True)  # Novo campo na chave primária
+    mesano_insert = Column(
+        String(6), nullable=False, primary_key=True
+    )  # Novo campo na chave primária
     wa_id = Column(String(13))
     message_status = Column(String(50))
     accepted = Column(String(255))
@@ -113,18 +118,20 @@ class Zapenviado(Base):
     datainsert = Column(TIMESTAMP, server_default=func.now())
 
 
-
 class Template(Base):
+
     __tablename__ = "templates"
-    
+
     name = Column(String, nullable=False, primary_key=True)
     status = Column(String, nullable=False)
     language = Column(String)
-    wbaccount_id = Column(String, ForeignKey(column="wb_accounts.business_account_id"), primary_key=True)
+    wbaccount_id = Column(
+        String, ForeignKey(column="wb_accounts.business_account_id"), primary_key=True
+    )
     PrimaryKeyConstraint("name", "wbaccount_id")
 
 
-class Wb_account(Base):    
+class Wb_account(Base):
     __tablename__ = "wb_accounts"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
@@ -141,8 +148,8 @@ def create_tables():
         inspector = inspect(engine)
         if "cartorios" in inspector.get_table_names():
             from controller.insrir_cartorios import dados_cartorio
+
             dados_cartorio()
 
     except Exception as e:
         logger.error(e)
-

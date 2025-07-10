@@ -12,7 +12,7 @@ from controller.controller import get_business_account, cadastrar_business_accou
 from templates import update_templates_list
 from utils.logger import Logger
 from utils.tools import zapeviados_to_csv
-
+from IA_classificador import classificar_mensagens
 
 
 logger = Logger().get_logger()
@@ -94,7 +94,14 @@ def show_menu():
             + Fore.GREEN
             + "Atualizar contatos sem número." + Fore.RED+"(colocar o arquivo csv com documento e telefone na pasta src/data.)\n"
 
-        )                 
+        )
+        print(
+            Fore.MAGENTA
+            + "[ 7 ] "
+            + Fore.GREEN
+            + "Atualizar contatos errados - Filtro IA\n"
+
+        )                           
         print(Fore.MAGENTA + "[ x ] " + Fore.GREEN + "Sair\n")
         print(Fore.MAGENTA + "===================================================\n")
 
@@ -173,6 +180,11 @@ def show_menu():
                 print(Style.RESET_ALL)
                 atualizar_contato()
                 pause()  
+
+            case "7":
+                print(Style.RESET_ALL)
+                classificar_mensagens()
+                pause() 
 
             ##### #Funções Ocultas######
             case "del":

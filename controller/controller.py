@@ -96,11 +96,10 @@ def inserir_contato(dados_contato, session):
     """
     Função responsável por cadastrar os contatos dos devedores.
 
-    """
-    from src.sender import iswhatsapp
+    """  
 
     documento, telefone = dados_contato
-    # iswhats = iswhatsapp(telefone)
+   
     try:
         contato = Contato(documento=documento, telefone=telefone)
         session.add(contato)
