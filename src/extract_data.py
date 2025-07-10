@@ -122,7 +122,7 @@ def extrair_dados(folder=FILES_DIR):
     for root, dirs, files in os.walk(FILES_DIR):
         if not "processed" in root:
             for file in files:
-                print(files)
+                print(file)
                 if "Cancelamento" in file and file.endswith(".xml"):
                     print(file)
                     file_path = os.path.join(root, file)
