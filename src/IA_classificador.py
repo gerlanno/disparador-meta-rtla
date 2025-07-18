@@ -56,7 +56,7 @@ def checar_resposta(prompt, telefone, mensagem):
 
 
 def log_operacao(data_execucao, data_inicial_filtro, registros_alterados):
-    log_file = "operacao_log.txt"
+    log_file = "LOG_IA_CLASSIFICADOR.txt"
     with open(log_file, "a") as f:
         f.write(
             f"Data de Execução: {data_execucao}, Data Inicial do Filtro: {data_inicial_filtro}, Registros Alterados: {registros_alterados}\n"
