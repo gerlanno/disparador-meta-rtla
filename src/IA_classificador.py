@@ -1,9 +1,10 @@
 import sys
 import os
+
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__))))
 )
-from config.configs import  OPENAI_APIKEY
+from config.configs import OPENAI_APIKEY
 from tqdm import tqdm
 import time
 from openai import OpenAI
@@ -40,17 +41,26 @@ prompt = """
 
                     """
 
+
 def checar_resposta(prompt, telefone, mensagem):
 
     completion = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=[
-        {"role": "developer", "content": prompt},
-        {"role": "user", "content": mensagem}
-    ]
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "developer", "content": prompt},
+            {"role": "user", "content": mensagem},
+        ],
     )
-    
+
     return completion.choices[0].message.content
+
+
+def log_operacao(data_execucao, data_inicial_filtro, registros_alterados):
+    log_file = "operacao_log.txt"
+    with open(log_file, "a") as f:
+        f.write(
+            f"Data de Execução: {data_execucao}, Data Inicial do Filtro: {data_inicial_filtro}, Registros Alterados: {registros_alterados}\n"
+        )
 
 
 def classificar_mensagens(data_inicial=hoje):
@@ -66,39 +76,41 @@ def classificar_mensagens(data_inicial=hoje):
                     GROUP BY 
                     sender_id;
                     """
-        
-        
-        #cursor.execute(query)
+
+        # cursor.execute(query)
         query_result = session.execute(text(query))
         query_iterable = query_result.fetchall()
-      
+
         if query_iterable:
-            for resultado in tqdm(query_iterable, desc="processando messagens", colour='GREEN'):
-                
+            for resultado in tqdm(
+                query_iterable, desc="processando messagens", colour="GREEN"
+            ):
+
                 result = checar_resposta(prompt, resultado[0], resultado[1])
 
                 vars = (resultado[0], result, resultado[1])
 
-                session.execute(text(
-                    f"""
+                session.execute(
+                    text(
+                        f"""
                             UPDATE contatos SET validado = {result} WHERE telefone LIKE ('%{resultado[0][-8:]}')
                         """
-                    
-                ))
+                    )
+                )
                 session.commit()
-        
-                
 
-                time.sleep(0.5)
+            log_operacao(
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                data_inicial,
+                len(query_iterable),
+            )
+
         else:
             print("Nenhuma mensagem encontrada!")
 
         session.close()
-    
-        
 
     except Exception as e:
         session.rollback()
+
         print(e)
-
-
