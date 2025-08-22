@@ -31,7 +31,8 @@ RUN which streamlit
 
 # Etapa 7: Expor a porta e configurar Health Check
 EXPOSE 8501
-HEALTHCHECK CMD curl --fail http://localhost:${PORT}/_stcore/health || exit 1
+HEALTHCHECK CMD /bin/sh -c 'curl --fail http://localhost:${PORT}/_stcore/health' || exit 1
+
 
 # Etapa 8: Comando de inicialização
-ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=${PORT}", "--server.address=0.0.0.0"]
+ENTRYPOINT streamlit run app.py --server.port=${PORT} --server.address=0.0.0.0
