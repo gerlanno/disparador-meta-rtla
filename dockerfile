@@ -19,7 +19,7 @@ RUN git clone https://github.com/gerlanno/disparador-meta-rtla.git .
 
 # ADICIONE ESTA LINHA PARA QUEBRAR O CACHE
 # Mude o valor sempre que precisar forçar um rebuild
-ARG CACHE_BUSTER=2025-08-22-022000
+ARG CACHE_BUSTER=2025-08-22-022800
 
 # Etapa 5: Instalar as dependências do Python a partir do arquivo clonado
 RUN pip3 install --no-cache-dir -r requirements.txt
