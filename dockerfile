@@ -1,6 +1,12 @@
 # Etapa 1: Imagem base
 FROM python:3.9-slim
 
+
+# ADICIONE ESTA LINHA PARA QUEBRAR O CACHE
+# Mude o valor sempre que precisar forçar um rebuild
+ARG CACHE_BUSTER=2025-08-22-000200
+
+
 # Etapa 2: Diretório de trabalho
 WORKDIR /api
 
@@ -14,9 +20,7 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# ADICIONE ESTA LINHA PARA QUEBRAR O CACHE
-# Mude o valor sempre que precisar forçar um rebuild
-ARG CACHE_BUSTER=2025-08-21-235800
+
 
 # Etapa 4: Clonar o repositório com o código da aplicação
 
