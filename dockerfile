@@ -3,7 +3,7 @@
 
 FROM python:3.9-slim
 
-WORKDIR /api
+WORKDIR /
 
 RUN apt-get update && apt-get install -y \
     curl \
