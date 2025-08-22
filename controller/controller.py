@@ -564,3 +564,4 @@ def att_iswhatsapp():
             session.commit()
         except Exception as e:
             logger.error(f"Erro atualizando Telefone - {e}")
+
