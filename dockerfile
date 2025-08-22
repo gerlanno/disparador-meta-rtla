@@ -35,4 +35,4 @@ HEALTHCHECK CMD /bin/sh -c 'curl --fail http://localhost:${PORT}/_stcore/health'
 
 
 # Etapa 8: Comando de inicialização
-ENTRYPOINT streamlit run api/app.py --server.port=${PORT} --server.address=0.0.0.0
+ENTRYPOINT streamlit run app.py --server.port=${PORT} --server.address=0.0.0.0
