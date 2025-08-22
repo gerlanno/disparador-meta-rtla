@@ -14,13 +14,15 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
+# ADICIONE ESTA LINHA PARA QUEBRAR O CACHE
+# Mude o valor sempre que precisar forçar um rebuild
+ARG CACHE_BUSTER=2025-08-21-235800
+
 # Etapa 4: Clonar o repositório com o código da aplicação
 
 RUN git clone https://github.com/gerlanno/disparador-meta-rtla.git .
 
-# ADICIONE ESTA LINHA PARA QUEBRAR O CACHE
-# Mude o valor sempre que precisar forçar um rebuild
-ARG CACHE_BUSTER=2025-08-21-235800
+
 
 # Etapa 5: Instalar as dependências do Python a partir do arquivo clonado
 RUN pip3 install streamlit
