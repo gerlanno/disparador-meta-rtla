@@ -1,0 +1,20 @@
+# Versão da sintaxe do Docker Compose
+version: '3.8'
+
+# Seção que define todos os serviços (contêineres) da sua aplicação
+services:
+  # Nome do seu serviço. Pode ser qualquer nome, ex: "disparador-meta"
+  streamlit-app:
+    # A instrução 'build: .' diz ao Docker para procurar e usar o 
+    # arquivo "Dockerfile" que está na mesma pasta para construir a imagem.
+    build: .
+    
+    # Define as variáveis de ambiente para o contêiner.
+    # Essencial para que a porta seja dinâmica, como o Easypanel precisa.
+    environment:
+      - PORT=8501
+      
+    # Mapeamento de portas. Útil para testar localmente.
+    # O Easypanel irá gerenciar a porta externa automaticamente.
+    ports:
+      - "8501:8501"
