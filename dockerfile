@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 
 # --- LINHA CRÍTICA PARA QUEBRAR O CACHE ---
 # Altere este valor para a data/hora atual antes de cada deploy para forçar a atualização
-ARG CACHE_BUSTER=2025-08-22-001200
+ARG CACHE_BUSTER=2025-08-22-113900
 
 # Esta etapa agora será executada novamente, pegando a versão mais recente do seu código
 RUN git clone https://github.com/gerlanno/disparador-meta-rtla.git .
