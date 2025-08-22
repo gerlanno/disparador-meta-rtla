@@ -1,44 +1,27 @@
-# Etapa 1: Imagem base
+# --- A Abordagem Final e Simplificada ---
+# Este é o método padrão e mais confiável.
+
 FROM python:3.9-slim
 
+# Define um diretório de trabalho limpo
+WORKDIR /app
 
-# ADICIONE ESTA LINHA PARA QUEBRAR O CACHE
-# Mude o valor sempre que precisar forçar um rebuild
-ARG CACHE_BUSTER=2025-08-22-000200
+# Instala somente o 'curl', que é necessário para o HEALTHCHECK. Não precisamos mais do git.
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
+# 1. Copia SÓ o arquivo de requisitos primeiro (isso otimiza o cache de forma inteligente)
+COPY requirements.txt .
 
-# Etapa 2: Diretório de trabalho
-WORKDIR /api
-
-# Etapa 3: Instalar dependências do sistema
-# ADICIONADO: libpq-dev e gcc para compilar o psycopg2
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    git \
-    libpq-dev \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
-
-
-
-# Etapa 4: Clonar o repositório com o código da aplicação
-
-RUN git clone https://github.com/gerlanno/disparador-meta-rtla.git .
-
-
-
-# Etapa 5: Instalar as dependências do Python a partir do arquivo clonado
+# 2. Instala os pacotes Python
 RUN pip3 install streamlit
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Etapa 6: (OPCIONAL) Verificar se o streamlit foi instalado corretamente
-RUN which streamlit
+# 3. Copia TODO o resto do seu código que o Easypanel já baixou
+COPY . .
 
-# Etapa 7: Expor a porta e configurar Health Check
+# Expõe a porta e define a checagem de saúde
 EXPOSE 8501
 HEALTHCHECK CMD /bin/sh -c 'curl --fail http://localhost:${PORT}/_stcore/health' || exit 1
 
-
-# Etapa 8: Comando de inicialização
+# Executa o app.py que foi copiado para a raiz do /app
 ENTRYPOINT streamlit run app.py --server.port=${PORT} --server.address=0.0.0.0
