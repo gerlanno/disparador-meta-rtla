@@ -12,12 +12,13 @@ RUN apt-get update && apt-get install -y \
 
 # --- LINHA CRÍTICA PARA QUEBRAR O CACHE ---
 # Altere este valor para a data/hora atual antes de cada deploy para forçar a atualização
-ARG CACHE_BUSTER=2025-08-22-001000
+ARG CACHE_BUSTER=2025-08-22-001200
 
 # Esta etapa agora será executada novamente, pegando a versão mais recente do seu código
 RUN git clone https://github.com/gerlanno/disparador-meta-rtla.git .
 
 # Lembre-se de usar psycopg2-binary no seu requirements.txt
+RUN pip3 install streamlit
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 EXPOSE 8501
