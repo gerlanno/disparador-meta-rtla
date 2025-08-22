@@ -1,27 +1,28 @@
-# --- A Abordagem Final e Simplificada ---
-# Este é o método padrão e mais confiável.
+# --- Dockerfile Definitivo ---
+# COPIE E COLE TODO ESTE CONTEÚDO
 
 FROM python:3.9-slim
 
-# Define um diretório de trabalho limpo
-WORKDIR /app
+WORKDIR /api
 
-# Instala somente o 'curl', que é necessário para o HEALTHCHECK. Não precisamos mais do git.
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# 1. Copia SÓ o arquivo de requisitos primeiro (isso otimiza o cache de forma inteligente)
-COPY requirements.txt .
+# --- LINHA CRÍTICA PARA QUEBRAR O CACHE ---
+# Altere este valor para a data/hora atual antes de cada deploy para forçar a atualização
+ARG CACHE_BUSTER=2025-08-22-001000
 
-# 2. Instala os pacotes Python
-RUN pip3 install streamlit
+# Esta etapa agora será executada novamente, pegando a versão mais recente do seu código
+RUN git clone https://github.com/gerlanno/disparador-meta-rtla.git .
+
+# Lembre-se de usar psycopg2-binary no seu requirements.txt
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# 3. Copia TODO o resto do seu código que o Easypanel já baixou
-COPY . .
-
-# Expõe a porta e define a checagem de saúde
 EXPOSE 8501
+
 HEALTHCHECK CMD /bin/sh -c 'curl --fail http://localhost:${PORT}/_stcore/health' || exit 1
 
-# Executa o app.py que foi copiado para a raiz do /app
+# Comando final apontando para o app.py na raiz
 ENTRYPOINT streamlit run app.py --server.port=${PORT} --server.address=0.0.0.0
