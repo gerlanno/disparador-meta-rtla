@@ -16,7 +16,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Sistema de Disparos", page_icon="📨", layout="wide")
 
-st.image("http://127.0.0.1:5000/static/rtla1.png", width=200)
+st.image("assets/rtla1.png", width=200)
 st.title("Sistema de Disparos")
 
 # FILTROS PADRÕES - CARTORIO - PROTOCOLO - DOCUMENOT - NOME - TELEFONE - DATA DISPARO
