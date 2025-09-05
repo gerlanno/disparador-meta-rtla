@@ -12,14 +12,15 @@ RUN apt-get update && apt-get install -y \
 
 # --- LINHA CRÍTICA PARA QUEBRAR O CACHE ---
 # Altere este valor para a data/hora atual antes de cada deploy para forçar a atualização
-ARG CACHE_BUSTER=2025-09-210200
+ARG CACHE_BUSTER=2025-09-210900
 
+
+# Etapa 6: Copia TODO o resto do seu código para dentro da imagem
+COPY . .
 # Lembre-se de usar psycopg2-binary no seu requirements.txt
 RUN pip3 install streamlit
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Etapa 6: Copia TODO o resto do seu código para dentro da imagem
-COPY . .
 
 EXPOSE 8501
 
