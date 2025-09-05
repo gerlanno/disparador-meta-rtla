@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 
 # --- LINHA CRÍTICA PARA QUEBRAR O CACHE ---
 # Altere este valor para a data/hora atual antes de cada deploy para forçar a atualização
-ARG CACHE_BUSTER=2025-08-22-155500
+ARG CACHE_BUSTER=2025-09-210200
 
 # Lembre-se de usar psycopg2-binary no seu requirements.txt
 RUN pip3 install streamlit
