@@ -169,7 +169,7 @@ if len(periodo_disparos) == 2:
         df = get_disparos(
             inicio_str,
             fim_str,
-            cartorio_id=cartorio_id,
+            cartorio_id=cartorio if cartorio else None,
             protocolo=protocolo,
             documento=documento,
             nome=nome,
