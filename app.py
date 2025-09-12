@@ -152,11 +152,12 @@ def get_disparos(
     query += " ORDER BY ze.datainsert DESC"
 
     df = pd.read_sql_query(query, con=engine, params=params)
+   
     if df.empty:
         st.warning("Nenhum disparo encontrado para os filtros selecionados.")
-        return None
-
-    return df
+        return df
+    else:
+        return df
 
 
 if len(periodo_disparos) == 2:
@@ -198,8 +199,7 @@ if len(periodo_disparos) == 2:
         )
         # --- FIM DO NOVO TRECHO ---
 
-    else:
-        st.info("Nenhum registro encontrado para os filtros selecionados.")
+
 
 else:
     st.warning("Selecione uma data inicial e uma final.")

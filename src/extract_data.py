@@ -5,7 +5,6 @@ sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__))))
 )
 from venv import logger
-import xml.etree.ElementTree as et
 from tqdm import tqdm
 from controller.controller import processa_dados_titulo, titulos_registrados
 from datetime import datetime, tzinfo
@@ -18,10 +17,14 @@ from config.configs import (
     LOG_DIR,
 )
 from shutil import move
+from utils.logger import Logger
+import xml.etree.ElementTree as et
+
 
 # Momento atual, com data e hora completa,
 # será usado para renomear o arquivo processado.
 AGORA = datetime.ctime(datetime.now()).replace(":", "").replace(" ", "")
+logger = Logger().get_logger()
 
 
 def extract_cancelamento(file):
@@ -120,29 +123,29 @@ def extrair_dados(folder=FILES_DIR):
     sucess = 0
 
     for root, dirs, files in os.walk(FILES_DIR):
-        if not 'processed' in root:
+        if not "processed" in root:
             for file in files:
-            
-                if 'Cancelamento' in file and file.endswith('.xml'):
-                    
+
+                if "Cancelamento" in file and file.endswith(".xml"):
+
                     file_path = os.path.join(root, file)
 
                     if os.path.isfile(os.path.join(PROCESSED_DIR, file)):
-                        
+
                         logger.error(f"Arquivo já importado anteriormente - [{file}]")
-                        
+
                     else:
                         extract_cancelamento(file_path)
                         # new_filename = f"Processado{AGORA}_{sucess}.xml"
 
                         path_processed = os.path.join(PROCESSED_DIR, file)
-
+                        logger.info(f"Arquivo Importado: [{file}]")
                         move(file_path, path_processed)
 
                         # os.rename(file_path, os.path.join(root, new_filename))
                         sucess = sucess + 1
                 else:
-                    print ("Nada para importar!")
+                    pass
 
     if not sucess > 0:
         return {"sucess": False, "message": "Nenhum arquivo processado."}
@@ -151,5 +154,3 @@ def extrair_dados(folder=FILES_DIR):
             "sucess": True,
             "message": f"Tarefa concluída, arquivos processados: {sucess}.",
         }
-
-
