@@ -3,6 +3,7 @@ import os
 from urllib import response
 from tqdm import tqdm
 from requests import delete, session
+
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__))))
 )
@@ -96,10 +97,10 @@ def inserir_contato(dados_contato, session):
     """
     Função responsável por cadastrar os contatos dos devedores.
 
-    """  
+    """
 
     documento, telefone = dados_contato
-   
+
     try:
         contato = Contato(documento=documento, telefone=telefone)
         session.add(contato)
@@ -127,7 +128,7 @@ def atualizar_contato():
         for dados in tqdm(
             dados_contato, "Atualizando..", unit="Contato", colour="BLUE"
         ):
-            
+
             documento, telefone = dados
 
             try:
@@ -196,19 +197,29 @@ def get_titulos(**kwargs):
     if kwargs:
         cartorio = kwargs.get("cartorio")
         # Filtragem de titulos por cartório
-        mesano_filter = input("Filtrar por mesano_insert? ").strip()
+        mesano_filter = kwargs.get("mes_ano_insert")
+        qtd_disparos = kwargs.get("qtd_disparos")
         titulos_para_enviar = session.query(Titulo).filter(~zapenviado_filter)
 
         if mesano_filter:
             titulos_para_enviar = titulos_para_enviar.filter(
                 Titulo.mesano_insert == mesano_filter
             )
+            if not titulos_para_enviar:
+                return "Nenhum titulo para enviar do período selecionado"
 
-        titulos_para_enviar = (
+        if qtd_disparos:
+            titulos_para_enviar = (
             titulos_para_enviar.filter(Titulo.cartorio_id == cartorio)
             .order_by(Titulo.valorprotestado)
-            .all()
+            .limit(qtd_disparos)
         )
+        else:           
+            titulos_para_enviar = (
+                titulos_para_enviar.filter(Titulo.cartorio_id == cartorio)
+                .order_by(Titulo.valorprotestado)
+                .all()
+            )
 
     else:
         # Lista de titulos sem filtro de cartório, somente os que não foram enviados ainda.
@@ -219,8 +230,7 @@ def get_titulos(**kwargs):
                 Titulo.mesano_insert == mesano_filter
             )
         titulos_para_enviar = (
-            titulos_para_enviar.query(Titulo)
-            .order_by(Titulo.valorprotestado).all()
+            titulos_para_enviar.query(Titulo).order_by(Titulo.valorprotestado).all()
         )
 
     for titulo in titulos_para_enviar:
@@ -245,40 +255,32 @@ def get_titulos(**kwargs):
             .all()
         )
 
-        telefone = []
+        
         for devedor in devedores:
 
             documento = devedor.documento
             nome_devedor = devedor.nome
-            contatos = (
-                session.query(Contato.telefone)
-                .filter(Contato.documento == devedor.documento)
-                .filter(Contato.validado == True)
-                .all()
-            )
-
-            for contato in contatos:
-                # Limitar a 2 números por titulo.
-                if len(telefone) < 2:
-                    if len(contato.telefone) > 0:
-                        telefone.append(contato.telefone)
-                else:
-                    pass
-
-        if telefone:
-            lista_titulos.append(
-                (
-                    nome_devedor,
-                    titulo_id,
-                    nome_credor,
-                    valor_titulo,
-                    numero_titulo,
-                    mesano_insert,
-                    url_cartorio,
-                    nome_cartorio,
-                    telefone if telefone else None,
+            contatos = (session.query(Contato.telefone)
+                    .filter(Contato.documento == documento, Contato.validado == True)
+                    .limit(2)
+                    .all()
                 )
-            )
+            telefones = [c[0] for c in contatos if c and c[0]]
+
+            if telefones:
+                lista_titulos.append(
+                    {
+                            "nome_devedor": devedor.nome,
+                            "titulo_id": titulo.id,
+                            "nome_credor": titulo.credor,
+                            "valor_titulo": str(titulo.valorprotestado),
+                            "numero_titulo": titulo.numerotitulo,
+                            "mesano_insert": titulo.mesano_insert,
+                            "url_cartorio": url_cartorio,
+                            "nome_cartorio": nome_cartorio,
+                            "telefones": telefones,
+                        }
+                )
 
     session.close()
     return lista_titulos if len(lista_titulos) > 0 else False
@@ -287,15 +289,18 @@ def get_titulos(**kwargs):
 def titulos_para_enviar(**kwargs):
     # Retornar quantos titulos para disparar mensagens.
     if kwargs:
-        titulos = get_titulos(cartorio=int(kwargs.get("cartorio")))
+        titulos = get_titulos(
+            cartorio=int(kwargs.get("cartorio")),
+            mes_ano_insert=(
+                kwargs.get("mes_ano_insert") if kwargs.get("mes_ano_insert") else None
+            ),
+        )
     else:
         titulos = get_titulos()
     if titulos:
-        disparos = 0
-        print(len(titulos))
-        for titulo in titulos:
-            disparos += len(titulo[8])
-        return disparos
+        
+        return (titulos)
+    
     else:
         return False
 
@@ -564,4 +569,3 @@ def att_iswhatsapp():
             session.commit()
         except Exception as e:
             logger.error(f"Erro atualizando Telefone - {e}")
-

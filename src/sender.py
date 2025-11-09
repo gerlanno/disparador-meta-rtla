@@ -3,6 +3,7 @@ import os
 import requests
 import json
 from xml.dom import NotFoundErr
+from sqlalchemy import Null
 from tqdm import tqdm
 from itertools import islice
 
@@ -24,6 +25,7 @@ logger = Logger().get_logger()
 
 
 template_name = ""
+
 
 def parse_error(response_text):
     error = response_text.get("error", {})
@@ -70,7 +72,7 @@ def set_template(business_id):
     raise NotFoundErr
 
 
-def disparar(business_acc_name, qtd_disparos):
+def disparar(business_acc_name=None, qtd_disparos=None, mes_ano=None):
 
     # Buscar a conta da meta informada.
     accounts = get_business_account(name=business_acc_name)
@@ -89,9 +91,10 @@ def disparar(business_acc_name, qtd_disparos):
 
     # Buscar a lista de titulos
     if business_acc_name in ["AGUIAR1", "AGUIAR2"]:
-        titulos = get_titulos(cartorio=8)
+
+        titulos = get_titulos(cartorio=8, mes_ano_insert=mes_ano, qtd_disparos=qtd_disparos if qtd_disparos else None)
     elif business_acc_name in ["OSSIAN1", "OSSIAN2"]:
-        titulos = get_titulos(cartorio=5)
+        titulos = get_titulos(cartorio=5, mes_ano_insert=mes_ano)
     else:
         titulos = get_titulos()
 
@@ -100,23 +103,22 @@ def disparar(business_acc_name, qtd_disparos):
 
     if titulos and template_name:
         for titulo in tqdm(
-            islice(titulos, qtd_disparos),
+            islice(titulos, qtd_disparos), #Slice: Usando um stop para disparar só a quantidade de titulos informada, se for informado
             total=qtd_disparos,
-            desc="Iniciando disparos..",
+            desc="Iniciando disparos",
             unit="Disparos ",
             colour="GREEN",
         ):
-            (
-                nome_devedor,
-                titulo_id,
-                nome_credor,
-                valor_titulo,
-                numero_titulo,
-                mesano_insert,
-                url_cartorio,
-                nome_cartorio,
-                telefones,
-            ) = titulo
+
+            nome_devedor = titulo.get("nome_devedor", "")
+            titulo_id = titulo.get("titulo_id", "")
+            nome_credor = titulo.get("nome_credor", "")
+            valor_titulo = titulo.get("valor_titulo", "")
+            numero_titulo = titulo.get("numero_titulo", "")
+            mesano_insert = titulo.get("mesano_insert", "")
+            url_cartorio = titulo.get("url_cartorio", "")
+            nome_cartorio = titulo.get("nome_cartorio", "")
+            telefones = titulo.get("telefones", [])
 
             # parametros do template de cancelamento
             paramentros_template = [
@@ -146,10 +148,9 @@ def disparar(business_acc_name, qtd_disparos):
                 },
             ]
 
-            
-            for telefone in telefones:                
+            for telefone in telefones:
                 # Enviar a mensagem para o número de cadastro do titulo.
-                send_messages(
+                send_test_messages(
                     phone_id,
                     api_token,
                     telefone,
@@ -164,6 +165,49 @@ def disparar(business_acc_name, qtd_disparos):
         return {"Status": "Nada a processar"}
 
     return {"Status": True}
+
+
+def send_test_messages(
+    phone_id,
+    api_token,
+    telefone,
+    template,
+    titulo_id,
+    mesano_insert,
+    paramentros_template,
+    business_id,
+):
+    # URL da API
+    api_url = f"https://graph.facebook.com/v20.0/{phone_id}/messages"
+
+    # Cabeçalhos da solicitação
+    headers = {
+        f"Authorization": api_token,  # token de acesso do cartório informado
+        "Content-Type": "application/json",
+    }
+
+    # Corpo da mensagem
+    data = {
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": f"{telefone}",
+        "type": "template",
+        "template": {
+            "name": f"{template}",
+            "language": {"code": "pt_BR"},
+            "components": [
+                {
+                    "type": "body",
+                    "parameters": paramentros_template,
+                }
+            ],
+        },
+    }
+
+    print(
+        f"Teste de envio: Api: {api_url}\nCabeçalhos: {headers}\nCorpo da mensagem: {data}"
+    )
+
 
 def send_messages(
     phone_id,

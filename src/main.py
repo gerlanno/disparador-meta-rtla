@@ -233,7 +233,7 @@ if __name__ == "__main__":
                 # Checar se existe a business acc com o nome informado e inciar os disparos.
                 if business_acc_name in acc.values():
                     print("Iniciando disparos..")
-                    disparar(business_acc_name, (qtd_disparos if qtd_disparos else None))
+                    disparar(business_acc_name, qtd_disparos=(qtd_disparos if qtd_disparos else None))
                     break
 
         except Exception as e:
