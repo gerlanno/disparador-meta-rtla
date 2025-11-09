@@ -150,7 +150,7 @@ def disparar(business_acc_name=None, qtd_disparos=None, mes_ano=None):
 
             for telefone in telefones:
                 # Enviar a mensagem para o número de cadastro do titulo.
-                send_test_messages(
+                send_messages(
                     phone_id,
                     api_token,
                     telefone,
@@ -165,48 +165,6 @@ def disparar(business_acc_name=None, qtd_disparos=None, mes_ano=None):
         return {"Status": "Nada a processar"}
 
     return {"Status": True}
-
-
-def send_test_messages(
-    phone_id,
-    api_token,
-    telefone,
-    template,
-    titulo_id,
-    mesano_insert,
-    paramentros_template,
-    business_id,
-):
-    # URL da API
-    api_url = f"https://graph.facebook.com/v20.0/{phone_id}/messages"
-
-    # Cabeçalhos da solicitação
-    headers = {
-        f"Authorization": api_token,  # token de acesso do cartório informado
-        "Content-Type": "application/json",
-    }
-
-    # Corpo da mensagem
-    data = {
-        "messaging_product": "whatsapp",
-        "recipient_type": "individual",
-        "to": f"{telefone}",
-        "type": "template",
-        "template": {
-            "name": f"{template}",
-            "language": {"code": "pt_BR"},
-            "components": [
-                {
-                    "type": "body",
-                    "parameters": paramentros_template,
-                }
-            ],
-        },
-    }
-
-    print(
-        f"Teste de envio: Api: {api_url}\nCabeçalhos: {headers}\nCorpo da mensagem: {data}"
-    )
 
 
 def send_messages(
