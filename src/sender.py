@@ -171,7 +171,7 @@ def disparar(business_acc_name=None, qtd_disparos=None, mes_ano=None):
                     business_id,
                 )
                 nome_anterior = nome_devedor
-
+                sleep(1)
 
         else:
             return {"Status": "Nada a processar"}
