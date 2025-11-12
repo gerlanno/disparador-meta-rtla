@@ -92,7 +92,7 @@ def disparar(business_acc_name=None, qtd_disparos=None, mes_ano=None):
     # Buscar a lista de titulos
     if business_acc_name in ["AGUIAR1", "AGUIAR2"]:
 
-        titulos = get_titulos(cartorio=8, mes_ano_insert=mes_ano, qtd_disparos=qtd_disparos if qtd_disparos else None)
+        titulos = get_titulos(cartorio=8, mes_ano_insert=mes_ano)
     elif business_acc_name in ["OSSIAN1", "OSSIAN2"]:
         titulos = get_titulos(cartorio=5, mes_ano_insert=mes_ano)
     else:
