@@ -157,7 +157,7 @@ def disparar(business_acc_name=None, qtd_disparos=None, mes_ano=None):
                 ]                          
                 
                 if nome_anterior == nome_atual:
-                    nome_anterior = ''
+                    nome_anterior = nome_atual
                     continue
                 # Enviar a mensagem para o número de cadastro do titulo.                    
                 send_messages(
