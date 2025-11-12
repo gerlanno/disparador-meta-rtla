@@ -204,9 +204,9 @@ def show_menu():
                 pause()
             case "titulos": 
                 cartorio = input("Código Cartório? (em branco para todos)" )
-                
-                if cartorio:
-                    print(titulos_para_enviar(cartorio=(cartorio)))
+                mes_ano = input("mes e ano? (Ex. 112025)" )
+                if cartorio or mes_ano:
+                    print(titulos_para_enviar(cartorio=(cartorio), mes_ano=mes_ano))
                 else:              
                     print(titulos_para_enviar())
                 pause()                               
