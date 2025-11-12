@@ -185,6 +185,7 @@ def get_titulos(**kwargs):
     session = create_session()
 
     # Consultar os ids que não estão na tabela zapenviados.
+    """
     zapenviado_filter = (
         session.query(Zapenviado.titulo_id)
         .filter(
@@ -193,41 +194,49 @@ def get_titulos(**kwargs):
         )
         .exists()
     )
-
+    """
     if kwargs:
         cartorio = kwargs.get("cartorio")
         # Filtragem de titulos por cartório
         mesano_filter = kwargs.get("mes_ano_insert")
         qtd_disparos = kwargs.get("qtd_disparos")
-        titulos_para_enviar = session.query(Titulo).filter(~zapenviado_filter)
-
-        if mesano_filter:
-            titulos_para_enviar = titulos_para_enviar.filter(
-                Titulo.mesano_insert == mesano_filter
+        titulos_para_enviar = (
+                session.query(Titulo).filter(Titulo.cartorio_id == cartorio)                
             )
-            if not titulos_para_enviar:
-                return "Nenhum titulo para enviar do período selecionado"
+       
+        #titulos_para_enviar = session.query(Titulo)#.filter(~zapenviado_filter)
+        try:
+            if mesano_filter:
+                titulos_para_enviar = titulos_para_enviar.filter(
+                    Titulo.mesano_insert == mesano_filter
+                )
+                if not titulos_para_enviar:
+                    return "Nenhum titulo para enviar do período selecionado"
 
-        if qtd_disparos:
-            titulos_para_enviar = (
-            titulos_para_enviar.filter(Titulo.cartorio_id == cartorio)
-            .order_by(Titulo.valorprotestado)
-            .limit(qtd_disparos)
-        )
-        else:           
-            titulos_para_enviar = (
+            if qtd_disparos:
+                titulos_para_enviar = (
                 titulos_para_enviar.filter(Titulo.cartorio_id == cartorio)
                 .order_by(Titulo.valorprotestado)
-                .all()
+                .limit(qtd_disparos)
             )
+            else:           
+                titulos_para_enviar = (
+                    titulos_para_enviar.filter(Titulo.cartorio_id == cartorio)
+                    .order_by(Titulo.valorprotestado)
+                    .all()
+                )
+        except Exception as e:
+            print(e)
 
     else:
         # Lista de titulos sem filtro de cartório, somente os que não foram enviados ainda.
         mesano_filter = input("Filtrar por mesano_insert? ").strip()
-        titulos_para_enviar = session.query(Titulo).filter(~zapenviado_filter)
+        
         if mesano_filter:
-            titulos_para_enviar = titulos_para_enviar.filter(
-                Titulo.mesano_insert == mesano_filter
+            titulos_para_enviar = (
+                session.query(Titulo).filter(Titulo.mesano_insert == mesano_filter)
+                .order_by(Titulo.valorprotestado)
+                .all()
             )
         titulos_para_enviar = (
             titulos_para_enviar.query(Titulo).order_by(Titulo.valorprotestado).all()
@@ -257,33 +266,52 @@ def get_titulos(**kwargs):
 
         
         for devedor in devedores:
-
             documento = devedor.documento
-            nome_devedor = devedor.nome
-            contatos = (session.query(Contato.telefone)
-                    .filter(Contato.documento == documento, Contato.validado == True)
-                    .limit(2)
-                    .all()
-                )
-            telefones = [c[0] for c in contatos if c and c[0]]
 
-            if telefones:
+            # Contatos válidos (limit 2)
+            contatos = (
+                session.query(Contato.telefone)
+                .filter(Contato.documento == documento, Contato.validado.is_(True))
+                .limit(2)
+                .all()
+            )
+
+            for contato in contatos:
+                telefone = contato[0]
+
+                # Verifica se este título + telefone + mesano já está em zapenviados
+                
+                ja_enviado = (
+                    session.query(Zapenviado.titulo_id)
+                    .filter(
+                        Zapenviado.titulo_id == titulo_id,
+                        Zapenviado.whatsapp == telefone,
+                        Zapenviado.mesano_insert == mesano_insert,
+                    )
+                    .first()
+                )
+               
+                if ja_enviado:
+                    continue  # pular duplicado
+
+                # adiciona item explodido
                 lista_titulos.append(
                     {
-                            "nome_devedor": devedor.nome,
-                            "titulo_id": titulo.id,
-                            "nome_credor": titulo.credor,
-                            "valor_titulo": str(titulo.valorprotestado),
-                            "numero_titulo": titulo.numerotitulo,
-                            "mesano_insert": titulo.mesano_insert,
-                            "url_cartorio": url_cartorio,
-                            "nome_cartorio": nome_cartorio,
-                            "telefones": telefones,
-                        }
+                        "nome_devedor": devedor.nome,
+                        "documento": documento,
+                        "titulo_id": titulo_id,
+                        "nome_credor": nome_credor,
+                        "valor_titulo": valor_titulo,
+                        "numero_titulo": numero_titulo,
+                        "mesano_insert": mesano_insert,
+                        "url_cartorio": url_cartorio,
+                        "nome_cartorio": nome_cartorio,
+                        "telefone": telefone,
+                    }
                 )
 
-    session.close()
-    return lista_titulos if len(lista_titulos) > 0 else False
+    session.close()    
+    return lista_titulos if lista_titulos else False
 
 
 def titulos_para_enviar(**kwargs):
