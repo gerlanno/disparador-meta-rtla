@@ -259,11 +259,12 @@ def cli_att_iswhatsapp(args):
 
 
 def cli_titulos(args):
-    print(
-        titulos_para_enviar(cartorio=args.cartorio, mes_ano_insert=args.mes_ano)
+    titulos = (
+       titulos_para_enviar(cartorio=args.cartorio, mes_ano_insert=args.mes_ano)
         if args.cartorio or args.mes_ano
         else titulos_para_enviar()
     )
+    print(f"Disparos pendentes para {args.cartorio if args.cartorio else ''}o Oficio : {titulos}")
 
 
 def cli_disparar(args):
@@ -274,7 +275,7 @@ def cli_disparar(args):
     business_accs = get_business_account()
     for acc in business_accs:
         if business_acc_name in acc.values():
-            print("Iniciando disparos..")
+            prinot("Iniciando disparos..")
             try:
                 print(disparar(business_acc_name=business_acc_name, qtd_disparos=(qtd_disparos if qtd_disparos else None), mes_ano=mes_ano))                
             except Exception as e:

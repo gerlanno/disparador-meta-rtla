@@ -327,7 +327,7 @@ def titulos_para_enviar(**kwargs):
         titulos = get_titulos()
     if titulos:
         
-        return (titulos[:10])
+        return (len(titulos))
     
     else:
         return False
