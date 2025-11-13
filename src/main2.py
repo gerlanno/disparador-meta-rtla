@@ -275,7 +275,7 @@ def cli_disparar(args):
     business_accs = get_business_account()
     for acc in business_accs:
         if business_acc_name in acc.values():
-            prinot("Iniciando disparos..")
+            print("Iniciando disparos..")
             try:
                 print(disparar(business_acc_name=business_acc_name, qtd_disparos=(qtd_disparos if qtd_disparos else None), mes_ano=mes_ano))                
             except Exception as e:
