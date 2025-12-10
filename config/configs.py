@@ -30,14 +30,14 @@ LOG_DIR = os.path.join(BASE_DIR, 'logs')
 
 # Dados Whatsapp Business
 wa_config = {
-    "OSIAN1": {
+    "__OSIAN1": {
         "NOME": "OSIAN ARARIPE",
         "WA_TOKEN": os.getenv("OSIAN_TOKEN"),
         "PHONE_NUMBER_ID": os.getenv(
             "OSIAN1_PHONE_NUMBER_ID"
         ),  # "display_phone_number": "+55 85 8663-3919"
     },
-    "OSIAN2": {
+    "__OSIAN2": {
         "NOME": "OSIAN ARARIPE",
         "WA_TOKEN": os.getenv("OSIAN_TOKEN"),
         "PHONE_NUMBER_ID": os.getenv(
@@ -79,14 +79,14 @@ wa_config = {
             "IEPTBCE3_PHONE_NUMBER_ID"
         ),  # "display_phone_number": "+55 85 9936-6186"
     },
-    "RTLA1": {
+    "OSIAN1": {
         "NOME": "Instituto de Cartórios de Protestos do Ceará - IEPTBCE",
         "WA_TOKEN": os.getenv("RTLA_TOKEN"),
         "PHONE_NUMBER_ID": os.getenv(
             "RTLA1_PHONE_NUMBER_ID"
         ),  # "display_phone_number": "+55 85 9841-1242"
     },
-    "RTLA2": {
+    "OSIAN2": {
         "NOME": "Instituto de Cartórios de Protestos do Ceará - IEPTBCE",
         "WA_TOKEN": os.getenv("RTLA_TOKEN"),
         "PHONE_NUMBER_ID": os.getenv(
@@ -111,7 +111,7 @@ def find_token(phone_number_id):
             token_found = ""
     return token_found if token_found else print("Token não localizado")
 
-def dados_contas():
+def dados_contas(name=None):
     
     dados = [
         {
@@ -178,4 +178,7 @@ def dados_contas():
             "display_phone_number": "558598411242"
         }
     ]
+
+    if name:
+        dados = [conta for conta in dados if conta.get("name") == name]
     return dados

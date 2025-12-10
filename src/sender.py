@@ -15,7 +15,7 @@ from controller.controller import (
     historico_disparos,
     cadastrar_template,
 )
-from config.configs import find_token
+from config.configs import find_token, dados_contas
 from utils.tools import convert_to_brl
 from utils.logger import Logger
 from time import sleep
@@ -75,7 +75,8 @@ def set_template(business_id):
 def disparar(business_acc_name=None, qtd_disparos=None, mes_ano=None):
 
     # Buscar a conta da meta informada.
-    accounts = get_business_account(name=business_acc_name)
+    accounts = dados_contas(name=business_acc_name)
+
     for acc in accounts:
         business_id = acc.get("business_account_id")
         phone_id = acc.get("phone_id")
