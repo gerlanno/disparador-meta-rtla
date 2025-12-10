@@ -172,7 +172,7 @@ def titulos_registrados():
 
     session.close()
 
-    return len(qtd_titulos)
+    return qtd_titulos
 
 
 def get_titulos(**kwargs):
