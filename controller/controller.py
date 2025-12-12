@@ -309,9 +309,9 @@ def get_titulos(**kwargs):
                         "telefone": telefone,
                     }
                 )
-
+    titulos_ordenados = sorted(lista_titulos, key=lambda x: x["nome_devedor"])
     session.close()    
-    return lista_titulos if lista_titulos else False
+    return titulos_ordenados if titulos_ordenados else False
 
 
 def titulos_para_enviar(**kwargs):
