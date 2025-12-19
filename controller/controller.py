@@ -168,11 +168,11 @@ def titulos_registrados():
     """
     session = create_session()
 
-    qtd_titulos = session.query(Titulo).all()
+    quantidade = session.query(Titulo).count()
 
     session.close()
 
-    return qtd_titulos
+    return quantidade
 
 
 def get_titulos(**kwargs):
