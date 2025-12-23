@@ -596,4 +596,4 @@ def att_iswhatsapp():
             ).update({Contato.validado: False})
             session.commit()
         except Exception as e:
-            logger.error(f"Erro atualizando Telefone - {e}")
+            logger.error(f"Erro atualizando Telefone {numero} - {e}")
