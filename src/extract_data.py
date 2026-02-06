@@ -1,3 +1,4 @@
+from math import log
 import sys
 import os
 
@@ -76,10 +77,13 @@ def extract_cancelamento(file):
 
                 whatsapp = ""
                 if not telefone.text == None and telefone.text.isnumeric():
-                    if telefone.text[2] != "3":
-                        whatsapp = f"55{telefone.text}"
+                    try:
+                        if telefone.text[2] != "3":
+                            whatsapp = f"55{telefone.text}"
 
-                        lista_contatos.append((documento_devedor, whatsapp))
+                            lista_contatos.append((documento_devedor, whatsapp))
+                    except:
+                        logger.error(f"Telefone com formato inválido - [{telefone.text}] - [{protocolo}]")
 
             lista_devedores.append((documento_devedor, nome_devedor))
         lista_titulos.append(
